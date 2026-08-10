@@ -1,0 +1,204 @@
+import { useState } from "react";
+
+const ticketsData = [
+  {
+    id: "#TK-1001",
+    customer: "John Doe",
+    email: "john@example.com",
+    subject: "Duplicate subscription charge",
+    category: "Billing",
+    priority: "High",
+    status: "Open",
+  },
+  {
+    id: "#TK-1002",
+    customer: "Alex Smith",
+    email: "alex@example.com",
+    subject: "Unable to login",
+    category: "Account",
+    priority: "Medium",
+    status: "In Progress",
+  },
+  {
+    id: "#TK-1003",
+    customer: "Maria Khan",
+    email: "maria@example.com",
+    subject: "Payment failed",
+    category: "Billing",
+    priority: "Critical",
+    status: "Open",
+  },
+  {
+    id: "#TK-1004",
+    customer: "David Lee",
+    email: "david@example.com",
+    subject: "Refund request",
+    category: "Refund",
+    priority: "High",
+    status: "Resolved",
+  },
+  {
+    id: "#TK-1005",
+    customer: "Emma Wilson",
+    email: "emma@example.com",
+    subject: "Application not loading",
+    category: "Technical",
+    priority: "Medium",
+    status: "In Progress",
+  },
+];
+
+function Tickets() {
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("All");
+  const [priority, setPriority] = useState("All");
+
+  const filteredTickets = ticketsData.filter((ticket) => {
+    const matchesSearch =
+      ticket.customer.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.subject.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.id.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus =
+      status === "All" || ticket.status === status;
+
+    const matchesPriority =
+      priority === "All" || ticket.priority === priority;
+
+    return matchesSearch && matchesStatus && matchesPriority;
+  });
+
+  return (
+    <div className="tickets-page">
+
+      <div className="page-header">
+        <div>
+          <h1>Tickets</h1>
+          <p>Manage and monitor customer support tickets</p>
+        </div>
+
+        <button className="new-ticket">
+          + New Ticket
+        </button>
+      </div>
+
+      <div className="ticket-toolbar">
+
+        <input
+          type="text"
+          placeholder="🔍 Search tickets..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="All">All Status</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+
+        <select
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <option value="All">All Priority</option>
+          <option value="Critical">Critical</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+      </div>
+
+      <div className="tickets-page-card">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Ticket</th>
+              <th>Customer</th>
+              <th>Subject</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {filteredTickets.map((ticket) => (
+              <tr key={ticket.id}>
+
+                <td>
+                  <strong>{ticket.id}</strong>
+                </td>
+
+                <td>
+                  <div className="customer">
+                    <div className="avatar small">
+                      {ticket.customer
+                        .split(" ")
+                        .map((name) => name[0])
+                        .join("")}
+                    </div>
+
+                    <div>
+                      <strong>{ticket.customer}</strong>
+                      <span>{ticket.email}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <td>{ticket.subject}</td>
+
+                <td>{ticket.category}</td>
+
+                <td>
+                  <span
+                    className={`badge ${
+                      ticket.priority.toLowerCase()
+                    }`}
+                  >
+                    {ticket.priority}
+                  </span>
+                </td>
+
+                <td>
+                  <span
+                    className={`badge ${
+                      ticket.status === "In Progress"
+                        ? "progress"
+                        : ticket.status === "Resolved"
+                        ? "open"
+                        : "open"
+                    }`}
+                  >
+                    {ticket.status}
+                  </span>
+                </td>
+
+              </tr>
+            ))}
+
+          </tbody>
+
+        </table>
+
+        {filteredTickets.length === 0 && (
+          <div className="empty-state">
+            No tickets found.
+          </div>
+        )}
+
+      </div>
+
+    </div>
+  );
+}
+
+export default Tickets;
