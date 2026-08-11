@@ -1,13 +1,19 @@
 import { useState } from "react";
-
+import TicketDetails from "./TicketDetails";
 import ticketsData from "../data/ticketsData";
+
+
     
     
 
 function Tickets() {
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("All");
-  const [priority, setPriority] = useState("All");
+const [status, setStatus] = useState("All");
+const [priority, setPriority] = useState("All");
+const [selectedTicket, setSelectedTicket] = useState(null);
+  
+  
+    
 
   const filteredTickets = ticketsData.filter((ticket) => {
     const matchesSearch =
@@ -23,6 +29,18 @@ function Tickets() {
 
     return matchesSearch && matchesStatus && matchesPriority;
   });
+
+    if (selectedTicket) {
+  return (
+    <TicketDetails
+      ticket={selectedTicket}
+      onBack={() => setSelectedTicket(null)}
+      onViewCustomer={() => {
+        alert("Customer profile connection coming next.");
+      }}
+    />
+  );
+    }
 
   return (
     <div className="tickets-page">
@@ -88,7 +106,11 @@ function Tickets() {
           <tbody>
 
             {filteredTickets.map((ticket) => (
-              <tr key={ticket.id}>
+              <tr
+  key={ticket.id}
+  onClick={() => setSelectedTicket(ticket)}
+  className="ticket-row"
+>
 
                 <td>
                   <strong>{ticket.id}</strong>
