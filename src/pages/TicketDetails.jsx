@@ -263,35 +263,85 @@ const [aiResult, setAiResult] = useState(null);
           {aiResult && (
   <div className="ai-result">
 
-    <h3>AI Analysis Result</h3>
+    <div className="ai-result-header">
+      <div>
+        <h3>✨ AI Analysis</h3>
+        <p>SupportFlow AI recommendation</p>
+      </div>
 
-    <p>
-      <strong>Category:</strong>{" "}
-      {aiResult.category || "Unknown"}
-    </p>
+      <span className="ai-ready-badge">
+        ● Ready
+      </span>
+    </div>
 
-    <p>
-      <strong>Priority:</strong>{" "}
-      {aiResult.priority || "Unknown"}
-    </p>
+    <div className="ai-result-grid">
 
-    <p>
-      <strong>Sentiment:</strong>{" "}
-      {aiResult.sentiment || "Unknown"}
-    </p>
+      <div className="ai-result-item">
+        <span>Category</span>
+        <strong>
+          {aiResult.category || "Unknown"}
+        </strong>
+      </div>
 
-    <p>
-      <strong>Summary:</strong>{" "}
-      {aiResult.summary || "No summary available."}
-    </p>
+      <div className="ai-result-item">
+        <span>Priority</span>
+        <strong>
+          {aiResult.priority || "Unknown"}
+        </strong>
+      </div>
 
-    <p>
-      <strong>Suggested Reply:</strong>{" "}
-      {aiResult.suggested_reply || "No reply generated."}
-    </p>
+      <div className="ai-result-item">
+        <span>Sentiment</span>
+        <strong>
+          {aiResult.sentiment || "Unknown"}
+        </strong>
+      </div>
+
+    </div>
+
+    <div className="ai-summary">
+
+      <h4>📝 Summary</h4>
+
+      <p>
+        {aiResult.summary ||
+          "No summary available."}
+      </p>
+
+    </div>
+
+    <div className="ai-reply">
+
+      <div>
+        <h4>💬 Suggested Reply</h4>
+
+        <p>
+          {aiResult.suggested_reply ||
+            "No reply generated."}
+        </p>
+      </div>
+
+      <button
+        className="copy-btn"
+        onClick={() => {
+          navigator.clipboard.writeText(
+            aiResult.suggested_reply || ""
+          );
+
+          alert("AI reply copied!");
+        }}
+      >
+        📋 Copy Reply
+      </button>
+
+    </div>
 
   </div>
 )}
+  
+
+    
+    
             
           
 
