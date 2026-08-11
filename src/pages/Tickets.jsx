@@ -35,9 +35,11 @@ const [selectedTicket, setSelectedTicket] = useState(null);
     <TicketDetails
       ticket={selectedTicket}
       onBack={() => setSelectedTicket(null)}
-      onViewCustomer={() => {
-        alert("Customer profile connection coming next.");
-      }}
+      onViewCustomer={(customerId) => {
+  onViewCustomer(customerId);
+}}
+        
+      
     />
   );
     }
