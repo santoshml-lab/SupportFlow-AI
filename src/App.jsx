@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Tickets from "./pages/Tickets";
 import Customers from "./pages/Customers";
-
+import "./App.css";
 const API_URL = "https://finpilotai-2s9v.onrender.com";
 
 function App() {
