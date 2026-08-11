@@ -1,4 +1,49 @@
+import { useState } from "react";
+
+
+
 function TicketDetails({ ticket, onBack, onViewCustomer }) {
+  const [loading, setLoading] = useState(false);
+const [aiResult, setAiResult] = useState(null);
+
+  const analyzeTicket = async () => {
+  setLoading(true);
+  setAiResult(null);
+
+  try {
+    const response = await fetch(
+      "https://finpilotai-2s9v.onrender.com/support/analyze",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: `${ticket.subject}. Customer: ${ticket.customer}`,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error("AI analysis failed");
+    }
+
+    let analysis = data.analysis;
+
+    if (typeof analysis === "string") {
+      analysis = JSON.parse(analysis);
+    }
+
+    setAiResult(analysis);
+  } catch (error) {
+    console.error(error);
+    alert("Unable to analyze ticket.");
+  } finally {
+    setLoading(false);
+  }
+};
   if (!ticket) {
     return (
       <div className="page-placeholder">
@@ -206,9 +251,49 @@ function TicketDetails({ ticket, onBack, onViewCustomer }) {
             ✨ AI Analysis Ready
           </div>
 
-          <button className="new-ticket">
-            Analyze Ticket with AI
-          </button>
+          <button
+  className="new-ticket"
+  onClick={analyzeTicket}
+  disabled={loading}
+>
+  {loading
+    ? "Analyzing..."
+    : "✨ Analyze Ticket with AI"}
+</button>
+          {aiResult && (
+  <div className="ai-result">
+
+    <h3>AI Analysis Result</h3>
+
+    <p>
+      <strong>Category:</strong>{" "}
+      {aiResult.category || "Unknown"}
+    </p>
+
+    <p>
+      <strong>Priority:</strong>{" "}
+      {aiResult.priority || "Unknown"}
+    </p>
+
+    <p>
+      <strong>Sentiment:</strong>{" "}
+      {aiResult.sentiment || "Unknown"}
+    </p>
+
+    <p>
+      <strong>Summary:</strong>{" "}
+      {aiResult.summary || "No summary available."}
+    </p>
+
+    <p>
+      <strong>Suggested Reply:</strong>{" "}
+      {aiResult.suggested_reply || "No reply generated."}
+    </p>
+
+  </div>
+)}
+            
+          
 
         </div>
 
