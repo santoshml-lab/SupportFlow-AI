@@ -1,52 +1,8 @@
 import { useState } from "react";
 
-const ticketsData = [
-  {
-    id: "#TK-1001",
-    customer: "John Doe",
-    email: "john@example.com",
-    subject: "Duplicate subscription charge",
-    category: "Billing",
-    priority: "High",
-    status: "Open",
-  },
-  {
-    id: "#TK-1002",
-    customer: "Alex Smith",
-    email: "alex@example.com",
-    subject: "Unable to login",
-    category: "Account",
-    priority: "Medium",
-    status: "In Progress",
-  },
-  {
-    id: "#TK-1003",
-    customer: "Maria Khan",
-    email: "maria@example.com",
-    subject: "Payment failed",
-    category: "Billing",
-    priority: "Critical",
-    status: "Open",
-  },
-  {
-    id: "#TK-1004",
-    customer: "David Lee",
-    email: "david@example.com",
-    subject: "Refund request",
-    category: "Refund",
-    priority: "High",
-    status: "Resolved",
-  },
-  {
-    id: "#TK-1005",
-    customer: "Emma Wilson",
-    email: "emma@example.com",
-    subject: "Application not loading",
-    category: "Technical",
-    priority: "Medium",
-    status: "In Progress",
-  },
-];
+import ticketsData from "../data/ticketsData";
+    
+    
 
 function Tickets() {
   const [search, setSearch] = useState("");
