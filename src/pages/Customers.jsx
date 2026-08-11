@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CustomerDetails from "./CustomerDetails";
 
 const initialCustomers = [
   {
@@ -57,6 +58,7 @@ function Customers() {
 
   const [showModal, setShowModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -158,6 +160,17 @@ function Customers() {
 
     closeModal();
   };
+  if (selectedCustomer) {
+  return (
+    <CustomerDetails
+      customer={selectedCustomer}
+      onBack={() => setSelectedCustomer(null)}
+      onEdit={() => {
+        openEditModal(selectedCustomer);
+      }}
+    />
+  );
+  }
 
   return (
     <div className="customers-page">
