@@ -402,27 +402,32 @@ function Customers() {
 
                 <td>
 
-                  <td>
-
   <button
     className="view-btn"
-    onClick={() =>
-      setSelectedCustomer(customer)
-    }
+    onClick={() => setSelectedCustomer(customer)}
   >
     👁️ View
   </button>
 
   <button
     className="edit-btn"
-    onClick={() =>
-      openEditModal(customer)
-    }
+    onClick={() => openEditModal(customer)}
   >
     ✏️ Edit
   </button>
 
 </td>
+
+                  
+
+
+    
+    
+      
+
+  
+
+
                     
                     
                       
