@@ -698,18 +698,10 @@ function App() {
         {/* ================= PLACEHOLDER PAGES ================= */}
 
         {page === "customers" && (
+  <Customers />
+)}
 
-          <div className="page-placeholder">
-
-            <h1>👥 Customers</h1>
-
-            <p>
-              Customer management module coming next.
-            </p>
-
-          </div>
-
-        )}
+        
 
 
         {page === "analytics" && (
