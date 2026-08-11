@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import ticketsData from "../data/ticketsData";
+
 function CustomerDetails({ customer, onBack, onEdit }) {
   const [showTickets, setShowTickets] = useState(true);
 
@@ -23,14 +25,12 @@ function CustomerDetails({ customer, onBack, onEdit }) {
     .map((name) => name[0])
     .join("");
 
-  const tickets = [
-    {
-      id: "TKT-2041",
-      subject: "Duplicate subscription charge",
-      category: "Billing",
-      priority: "High",
-      status: "Open",
-    },
+  const tickets = ticketsData.filter(
+  (ticket) => ticket.customerId === customer.id
+);
+    
+      
+      
     {
       id: "TKT-1987",
       subject: "Payment confirmation issue",
