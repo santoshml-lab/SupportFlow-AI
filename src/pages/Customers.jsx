@@ -52,13 +52,37 @@ const initialCustomers = [
   },
 ];
 
-function Customers() {
+function Customers({ selectedCustomerId, onCustomerSelected }) {
   const [customers, setCustomers] = useState(initialCustomers);
   const [search, setSearch] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const customerFromTicket = customers.find(
+  (customer) => customer.id === selectedCustomerId
+);
+
+if (selectedCustomerId && customerFromTicket) {
+  return (
+    <CustomerDetails
+      customer={customerFromTicket}
+      onBack={() => {
+        onCustomerSelected();
+        setSelectedCustomer(null);
+      }}
+      onEdit={() => {
+        setEditingCustomer(customerFromTicket);
+        setForm({
+          name: customerFromTicket.name,
+          email: customerFromTicket.email,
+          status: customerFromTicket.status,
+        });
+        setShowModal(true);
+      }}
+    />
+  );
+}
 
   const [form, setForm] = useState({
     name: "",
