@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const customersData = [
+const initialCustomers = [
   {
     id: "CUS-1001",
     name: "John Doe",
@@ -52,31 +52,112 @@ const customersData = [
 ];
 
 function Customers() {
+  const [customers, setCustomers] = useState(initialCustomers);
   const [search, setSearch] = useState("");
 
-  const filteredCustomers = customersData.filter((customer) => {
+  const [showModal, setShowModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    status: "Active",
+  });
+
+  const filteredCustomers = customers.filter((customer) => {
+    const query = search.toLowerCase();
+
     return (
-      customer.name.toLowerCase().includes(search.toLowerCase()) ||
-      customer.email.toLowerCase().includes(search.toLowerCase()) ||
-      customer.id.toLowerCase().includes(search.toLowerCase())
+      customer.name.toLowerCase().includes(query) ||
+      customer.email.toLowerCase().includes(query) ||
+      customer.id.toLowerCase().includes(query)
     );
   });
 
-  const totalCustomers = customersData.length;
+  const totalCustomers = customers.length;
 
-  const activeCustomers = customersData.filter(
+  const activeCustomers = customers.filter(
     (customer) => customer.status === "Active"
   ).length;
 
-  const totalTickets = customersData.reduce(
+  const totalTickets = customers.reduce(
     (total, customer) => total + customer.tickets,
     0
   );
 
-  const openTickets = customersData.reduce(
+  const openTickets = customers.reduce(
     (total, customer) => total + customer.openTickets,
     0
   );
+
+  const openAddModal = () => {
+    setEditingCustomer(null);
+
+    setForm({
+      name: "",
+      email: "",
+      status: "Active",
+    });
+
+    setShowModal(true);
+  };
+
+  const openEditModal = (customer) => {
+    setEditingCustomer(customer);
+
+    setForm({
+      name: customer.name,
+      email: customer.email,
+      status: customer.status,
+    });
+
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingCustomer(null);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.name.trim() || !form.email.trim()) {
+      alert("Please enter customer name and email.");
+      return;
+    }
+
+    if (editingCustomer) {
+      setCustomers((currentCustomers) =>
+        currentCustomers.map((customer) =>
+          customer.id === editingCustomer.id
+            ? {
+                ...customer,
+                name: form.name,
+                email: form.email,
+                status: form.status,
+              }
+            : customer
+        )
+      );
+    } else {
+      const newCustomer = {
+        id: `CUS-${1000 + customers.length + 1}`,
+        name: form.name,
+        email: form.email,
+        tickets: 0,
+        openTickets: 0,
+        status: form.status,
+      };
+
+      setCustomers((currentCustomers) => [
+        ...currentCustomers,
+        newCustomer,
+      ]);
+    }
+
+    closeModal();
+  };
 
   return (
     <div className="customers-page">
@@ -87,12 +168,16 @@ function Customers() {
 
         <div>
           <h1>Customers</h1>
+
           <p>
             Manage and monitor your customer relationships
           </p>
         </div>
 
-        <button className="new-ticket">
+        <button
+          className="new-ticket"
+          onClick={openAddModal}
+        >
           + Add Customer
         </button>
 
@@ -111,8 +196,14 @@ function Customers() {
 
           <div>
             <span>Total Customers</span>
-            <h2>{totalCustomers}</h2>
-            <small>Registered customers</small>
+
+            <h2>
+              {totalCustomers}
+            </h2>
+
+            <small>
+              Registered customers
+            </small>
           </div>
 
         </div>
@@ -126,8 +217,14 @@ function Customers() {
 
           <div>
             <span>Active Customers</span>
-            <h2>{activeCustomers}</h2>
-            <small>Currently active</small>
+
+            <h2>
+              {activeCustomers}
+            </h2>
+
+            <small>
+              Currently active
+            </small>
           </div>
 
         </div>
@@ -141,8 +238,14 @@ function Customers() {
 
           <div>
             <span>Total Tickets</span>
-            <h2>{totalTickets}</h2>
-            <small>Customer support tickets</small>
+
+            <h2>
+              {totalTickets}
+            </h2>
+
+            <small>
+              Customer support tickets
+            </small>
           </div>
 
         </div>
@@ -156,8 +259,14 @@ function Customers() {
 
           <div>
             <span>Open Tickets</span>
-            <h2>{openTickets}</h2>
-            <small>Needs attention</small>
+
+            <h2>
+              {openTickets}
+            </h2>
+
+            <small>
+              Needs attention
+            </small>
           </div>
 
         </div>
@@ -173,7 +282,9 @@ function Customers() {
           type="text"
           placeholder="🔍 Search customers..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
         />
 
       </div>
@@ -198,6 +309,8 @@ function Customers() {
               <th>Open Tickets</th>
 
               <th>Status</th>
+
+              <th>Action</th>
 
             </tr>
 
@@ -273,6 +386,20 @@ function Customers() {
 
                 </td>
 
+
+                <td>
+
+                  <button
+                    className="edit-btn"
+                    onClick={() =>
+                      openEditModal(customer)
+                    }
+                  >
+                    ✏️ Edit
+                  </button>
+
+                </td>
+
               </tr>
 
             ))}
@@ -291,6 +418,146 @@ function Customers() {
         )}
 
       </div>
+
+
+      {/* ================= ADD / EDIT MODAL ================= */}
+
+      {showModal && (
+
+        <div className="modal-overlay">
+
+          <div className="customer-modal">
+
+            <div className="modal-header">
+
+              <div>
+
+                <h2>
+                  {editingCustomer
+                    ? "Edit Customer"
+                    : "Add Customer"}
+                </h2>
+
+                <p>
+                  {editingCustomer
+                    ? "Update customer information"
+                    : "Create a new customer"}
+                </p>
+
+              </div>
+
+
+              <button
+                className="modal-close"
+                onClick={closeModal}
+              >
+                ×
+              </button>
+
+            </div>
+
+
+            <form onSubmit={handleSubmit}>
+
+              <div className="form-group">
+
+                <label>
+                  Customer Name
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Enter customer name"
+                  value={form.name}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      name: e.target.value,
+                    })
+                  }
+                />
+
+              </div>
+
+
+              <div className="form-group">
+
+                <label>
+                  Email Address
+                </label>
+
+                <input
+                  type="email"
+                  placeholder="customer@example.com"
+                  value={form.email}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      email: e.target.value,
+                    })
+                  }
+                />
+
+              </div>
+
+
+              <div className="form-group">
+
+                <label>
+                  Status
+                </label>
+
+                <select
+                  value={form.status}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      status: e.target.value,
+                    })
+                  }
+                >
+                  <option value="Active">
+                    Active
+                  </option>
+
+                  <option value="Inactive">
+                    Inactive
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div className="modal-actions">
+
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={closeModal}
+                >
+                  Cancel
+                </button>
+
+
+                <button
+                  type="submit"
+                  className="new-ticket"
+                >
+                  {editingCustomer
+                    ? "Save Changes"
+                    : "Add Customer"}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
 
     </div>
   );
