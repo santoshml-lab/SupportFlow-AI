@@ -6,6 +6,7 @@ const API_URL = "https://finpilotai-2s9v.onrender.com";
 
 function App() {
   const [page, setPage] = useState("dashboard");
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -167,8 +168,15 @@ function App() {
         {/* ================= TICKETS PAGE ================= */}
 
         {page === "tickets" && (
-          <Tickets />
-        )}
+  <Tickets
+    onViewCustomer={(customerId) => {
+      setSelectedCustomerId(customerId);
+      setPage("customers");
+    }}
+  />
+)}
+          
+        
 
 
         {/* ================= DASHBOARD ================= */}
