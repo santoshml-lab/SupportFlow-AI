@@ -706,8 +706,13 @@ function App() {
         {/* ================= PLACEHOLDER PAGES ================= */}
 
         {page === "customers" && (
-  <Customers />
+  <Customers
+    selectedCustomerId={selectedCustomerId}
+    onCustomerSelected={() => setSelectedCustomerId(null)}
+  />
 )}
+  
+
 
         
 
