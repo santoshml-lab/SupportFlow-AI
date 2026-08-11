@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import ticketsData from "../data/ticketsData";
 
 function CustomerDetails({ customer, onBack, onEdit }) {
@@ -25,27 +24,10 @@ function CustomerDetails({ customer, onBack, onEdit }) {
     .map((name) => name[0])
     .join("");
 
+  // Get only this customer's tickets
   const tickets = ticketsData.filter(
-  (ticket) => ticket.customerId === customer.id
-);
-    
-      
-      
-    {
-      id: "TKT-1987",
-      subject: "Payment confirmation issue",
-      category: "Billing",
-      priority: "Medium",
-      status: "Resolved",
-    },
-    {
-      id: "TKT-1874",
-      subject: "Unable to update payment method",
-      category: "Account",
-      priority: "Low",
-      status: "Resolved",
-    },
-  ];
+    (ticket) => ticket.customerId === customer.id
+  );
 
   return (
     <div className="customer-details-page">
@@ -293,6 +275,8 @@ function CustomerDetails({ customer, onBack, onEdit }) {
                             ? "high"
                             : ticket.priority === "Medium"
                             ? "medium"
+                            : ticket.priority === "Critical"
+                            ? "critical"
                             : "open"
                         }`}
                       >
@@ -307,7 +291,9 @@ function CustomerDetails({ customer, onBack, onEdit }) {
                         className={`badge ${
                           ticket.status === "Open"
                             ? "open"
-                            : "progress"
+                            : ticket.status === "In Progress"
+                            ? "progress"
+                            : "open"
                         }`}
                       >
                         {ticket.status}
@@ -322,6 +308,15 @@ function CustomerDetails({ customer, onBack, onEdit }) {
               </tbody>
 
             </table>
+
+
+            {tickets.length === 0 && (
+
+              <div className="empty-state">
+                No tickets found for this customer.
+              </div>
+
+            )}
 
           </div>
 
