@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomerDetails from "./CustomerDetails";
 
 const initialCustomers = [
@@ -59,6 +59,17 @@ function Customers({ selectedCustomerId, onCustomerSelected }) {
   const [showModal, setShowModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  useEffect(() => {
+  if (selectedCustomerId) {
+    const customer = customers.find(
+      (customer) => customer.id === selectedCustomerId
+    );
+
+    if (customer) {
+      setSelectedCustomer(customer);
+    }
+  }
+}, [selectedCustomerId, customers]);
   const customerFromTicket = customers.find(
   (customer) => customer.id === selectedCustomerId
 );
