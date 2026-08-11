@@ -6,8 +6,8 @@ import ticketsData from "../data/ticketsData";
     
     
 
-function Tickets() {
-  const [search, setSearch] = useState("");
+function Tickets({ onViewCustomer }) {
+    const [search, setSearch] = useState("");
 const [status, setStatus] = useState("All");
 const [priority, setPriority] = useState("All");
 const [selectedTicket, setSelectedTicket] = useState(null);
