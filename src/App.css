@@ -814,3 +814,110 @@ tbody tr:hover {
   background: #f5f5f7;
   color: #1d1d1f;
 }
+
+/* ===== FORCE APPLE WHITE THEME ===== */
+
+html,
+body,
+#root {
+  background: #f5f5f7 !important;
+  color: #1d1d1f !important;
+}
+
+.app {
+  background: #f5f5f7 !important;
+}
+
+.main {
+  background: #f5f5f7 !important;
+}
+
+.sidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #e5e5e7 !important;
+}
+
+/* Cards pure white */
+
+.stat-card,
+.analyzer-card,
+.result-card,
+.detail-card,
+.table-card,
+.tickets-page-card,
+.ticket-overview-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e5e7 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Headings */
+
+h1,
+h2,
+h3,
+strong {
+  color: #1d1d1f !important;
+}
+
+/* Secondary text */
+
+p,
+span,
+small {
+  color: #6e6e73;
+}
+
+/* Apple blue */
+
+.new-ticket,
+#analyzeBtn {
+  background: #0071e3 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Inputs */
+
+input,
+textarea,
+select {
+  background: #ffffff !important;
+  color: #1d1d1f !important;
+  border: 1px solid #d2d2d7 !important;
+}
+
+/* Navigation */
+
+.nav-item {
+  background: transparent !important;
+  color: #6e6e73 !important;
+}
+
+.nav-item.active {
+  background: #e8f2ff !important;
+  color: #0071e3 !important;
+  border: 1px solid #cfe5ff !important;
+}
+
+/* Table */
+
+table {
+  background: #ffffff !important;
+}
+
+table th {
+  background: #fafafa !important;
+  color: #6e6e73 !important;
+}
+
+table td {
+  background: #ffffff !important;
+  color: #1d1d1f !important;
+}
+
+/* AI card */
+
+.ai-ticket-card {
+  background: #ffffff !important;
+}
