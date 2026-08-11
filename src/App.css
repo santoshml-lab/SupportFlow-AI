@@ -304,3 +304,99 @@
 .customer-tickets-section td {
   padding: 15px 16px;
 }
+.ai-result {
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.ai-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ai-result-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.ai-result-header p {
+  margin: 5px 0 0;
+  color: #6b7280;
+}
+
+.ai-ready-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ai-result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.ai-result-item {
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.ai-result-item span {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.ai-result-item strong {
+  font-size: 16px;
+}
+
+.ai-summary,
+.ai-reply {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.ai-summary h4,
+.ai-reply h4 {
+  margin: 0 0 8px;
+}
+
+.ai-summary p,
+.ai-reply p {
+  margin: 0;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.ai-reply {
+  border-left: 4px solid #6366f1;
+}
+
+.copy-btn {
+  margin-top: 14px;
+  padding: 9px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .ai-result-grid {
+    grid-template-columns: 1fr;
+  }
+}
