@@ -402,16 +402,36 @@ function Customers() {
 
                 <td>
 
-                  <button
-                    className="edit-btn"
-                    onClick={() =>
-                      openEditModal(customer)
-                    }
-                  >
-                    ✏️ Edit
-                  </button>
+                  <td>
 
-                </td>
+  <button
+    className="view-btn"
+    onClick={() =>
+      setSelectedCustomer(customer)
+    }
+  >
+    👁️ View
+  </button>
+
+  <button
+    className="edit-btn"
+    onClick={() =>
+      openEditModal(customer)
+    }
+  >
+    ✏️ Edit
+  </button>
+
+</td>
+                    
+                    
+                      
+                    
+                  
+                    
+                  
+
+                
 
               </tr>
 
