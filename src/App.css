@@ -7,6 +7,8 @@
   --apple-bg: #0b0b0f;
   --apple-white: #1c1c1e;
   --apple-black: #f5f5f7;
+   --apple-text: #f5f5f7;
+--apple-card-light: #242426;
   --apple-gray: #a1a1a6;
   --apple-light-gray: #86868b;
   --apple-border: #2c2c2e;
@@ -258,7 +260,7 @@ button {
 }
 
 /* ===============================
-   STEP 4 — APPLE STYLE CARDS
+   STEP 4 — APPLE DARK PREMIUM CARDS
    =============================== */
 
 .stat-card,
@@ -268,30 +270,39 @@ button {
 .detail-card,
 .ticket-overview-card,
 .customer-profile-card {
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #1c1c1e;
+
+  border: 1px solid #2c2c2e;
+
   border-radius: 20px;
 
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.04);
+    0 4px 20px rgba(0, 0, 0, 0.25);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
   transition:
     transform 0.25s ease,
-    box-shadow 0.25s ease;
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .stat-card:hover,
 .analyzer-card:hover,
 .table-card:hover,
-.detail-card:hover {
+.detail-card:hover,
+.ticket-overview-card:hover,
+.customer-profile-card:hover {
   transform: translateY(-3px);
 
+  border-color: #3a3a3c;
+
   box-shadow:
-    0 12px 35px rgba(0, 0, 0, 0.08);
+    0 12px 35px rgba(0, 0, 0, 0.35);
 }
+   
+   
    
    
 
