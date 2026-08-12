@@ -709,6 +709,169 @@ button {
   }
 
 }
+
+/* =========================================================
+   STEP 7 — AI TICKET ANALYZER
+   ========================================================= */
+
+.analyzer-section {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.analyzer-card {
+  padding: 24px;
+
+  background: #1c1c1e;
+
+  border: 1px solid #2c2c2e;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   ANALYZER LABEL
+   ========================================================= */
+
+.analyzer-card label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #f5f5f7;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.analyzer-card textarea {
+  width: 100%;
+
+  min-height: 125px;
+
+  padding: 15px;
+
+  resize: vertical;
+
+  background: #242426;
+
+  border: 1px solid #3a3a3c;
+
+  border-radius: 13px;
+
+  color: #f5f5f7;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  outline: none;
+
+  display: block;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.analyzer-card textarea::placeholder {
+  color: #86868b;
+}
+
+
+.analyzer-card textarea:focus {
+  border-color: #0a84ff;
+
+  box-shadow:
+    0 0 0 4px rgba(10, 132, 255, 0.12);
+}
+
+
+/* =========================================================
+   ANALYZER FOOTER
+   ========================================================= */
+
+.analyzer-footer {
+  margin-top: 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+
+.analyzer-footer span {
+  color: #86868b;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   ANALYZE BUTTON
+   ========================================================= */
+
+#analyzeBtn {
+  padding: 11px 17px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #0a84ff;
+
+  color: white;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  box-shadow:
+    0 6px 18px rgba(10, 132, 255, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+#analyzeBtn:hover {
+  background: #2196ff;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 9px 24px rgba(10, 132, 255, 0.32);
+}
+
+
+#analyzeBtn:active {
+  transform: scale(0.98);
+}
+
+
+#analyzeBtn:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
    
    
    
