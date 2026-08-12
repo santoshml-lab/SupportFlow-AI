@@ -1247,6 +1247,65 @@ button {
   color: #34c759;
   background: rgba(52, 199, 89, 0.14);
 }
+
+/* =========================================================
+   STEP 13 — MOBILE TABLE OPTIMIZATION
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .table-card {
+    overflow-x: hidden;
+  }
+
+  .table-card table {
+    min-width: 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .table-card th,
+  .table-card td {
+    padding: 12px 8px;
+    font-size: 11px;
+  }
+
+  .table-card th:nth-child(1),
+  .table-card td:nth-child(1) {
+    width: 25%;
+  }
+
+  .table-card th:nth-child(2),
+  .table-card td:nth-child(2) {
+    width: 27%;
+  }
+
+  .table-card th:nth-child(3),
+  .table-card td:nth-child(3) {
+    width: 18%;
+  }
+
+  .table-card th:nth-child(4),
+  .table-card td:nth-child(4) {
+    width: 15%;
+  }
+
+  .table-card th:nth-child(5),
+  .table-card td:nth-child(5) {
+    width: 15%;
+  }
+
+  .table-card td {
+    word-break: break-word;
+  }
+
+  .priority-badge,
+  .status-badge {
+    min-width: auto;
+    padding: 5px 7px;
+    font-size: 10px;
+  }
+}
    
    
    
