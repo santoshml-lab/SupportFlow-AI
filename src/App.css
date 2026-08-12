@@ -872,6 +872,183 @@ button {
 
   transform: none;
 }
+
+/* =========================================================
+   STEP 8 — RECENT TICKETS TABLE
+   ========================================================= */
+
+.tickets-section {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: #f5f5f7;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.section-header p {
+  margin: 5px 0 0;
+  color: #86868b;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   TABLE CARD
+   ========================================================= */
+
+.table-card {
+  overflow: hidden;
+
+  background: #1c1c1e;
+
+  border: 1px solid #2c2c2e;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-card table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  background: #1c1c1e;
+
+  table-layout: fixed;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.table-card thead {
+  background: #242426;
+}
+
+.table-card th {
+  padding: 14px 12px;
+
+  color: #a1a1a6;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-align: left;
+
+  border-bottom: 1px solid #2c2c2e;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.table-card td {
+  padding: 14px 12px;
+
+  color: #f5f5f7;
+
+  font-size: 12px;
+
+  border-bottom: 1px solid #2c2c2e;
+
+  vertical-align: middle;
+
+  word-wrap: break-word;
+}
+
+.table-card tbody tr {
+  transition: background 0.2s ease;
+}
+
+.table-card tbody tr:hover {
+  background: #242426;
+}
+
+.table-card tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   CUSTOMER IN TABLE
+   ========================================================= */
+
+.table-card .customer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.table-card .customer strong {
+  display: block;
+
+  color: #f5f5f7;
+
+  font-size: 12px;
+}
+
+.table-card .customer span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #86868b;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   VIEW ALL BUTTON
+   ========================================================= */
+
+.view-all {
+  padding: 8px 12px;
+
+  background: transparent;
+
+  border: 1px solid #3a3a3c;
+
+  border-radius: 10px;
+
+  color: #0a84ff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.view-all:hover {
+  background: rgba(10, 132, 255, 0.10);
+
+  border-color: rgba(10, 132, 255, 0.35);
+}
    
    
    
