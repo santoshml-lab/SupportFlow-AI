@@ -257,9 +257,9 @@ button {
   font-size: 11px;
 }
 
-/* =========================================================
-   STEP 3 — APPLE DARK DASHBOARD CARDS
-   ========================================================= */
+/* ===============================
+   STEP 4 — APPLE STYLE CARDS
+   =============================== */
 
 .stat-card,
 .analyzer-card,
@@ -268,114 +268,35 @@ button {
 .detail-card,
 .ticket-overview-card,
 .customer-profile-card {
-  background: #1c1c1e;
-  border: 1px solid #2c2c2e;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+
   box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.28);
+    0 4px 20px rgba(0, 0, 0, 0.04);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-/* Dashboard stat cards */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-}
+.stat-card:hover,
+.analyzer-card:hover,
+.table-card:hover,
+.detail-card:hover {
+  transform: translateY(-3px);
 
-/* Stat card text */
-.stat-card span {
-  color: #a1a1a6;
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.08);
 }
+   
+   
 
-.stat-card h2 {
-  color: #f5f5f7;
-}
 
-.stat-card small {
-  color: #86868b;
-}
 
-/* Analyzer */
-.analyzer-card label {
-  color: #f5f5f7;
-}
-
-textarea {
-  background: #2c2c2e;
-  color: #f5f5f7;
-  border-color: #3a3a3c;
-}
-
-textarea::placeholder {
-  color: #8e8e93;
-}
-
-/* Section headings */
-.section-header h2 {
-  color: #f5f5f7;
-}
-
-.section-header p {
-  color: #a1a1a6;
-}
-
-/* Tables */
-table {
-  background: #1c1c1e;
-}
-
-thead {
-  background: #242426;
-}
-
-th {
-  color: #a1a1a6;
-  border-bottom-color: #3a3a3c;
-}
-
-td {
-  color: #f5f5f7;
-  border-bottom-color: #2c2c2e;
-}
-
-tbody tr:hover {
-  background: #242426;
-}
-
-/* Buttons */
-#analyzeBtn,
-.new-ticket {
-  background: #0a84ff;
-}
-
-#analyzeBtn:hover,
-.new-ticket:hover {
-  background: #409cff;
-}
-
-/* Dark inputs */
-input,
-select {
-  background: #1c1c1e;
-  color: #f5f5f7;
-  border-color: #3a3a3c;
-}
-
-input::placeholder {
-  color: #8e8e93;
-}
-
-/* Keep dashboard responsive */
-@media (max-width: 1100px) {
-  .stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 650px) {
-  .stats {
-    grid-template-columns: 1fr;
-  }
-}
    
    
 
