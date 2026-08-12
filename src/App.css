@@ -1573,6 +1573,40 @@ button {
 
   border-color: rgba(255, 149, 0, 0.22);
 }
+
+/* =========================================================
+   STEP 20 — CUSTOMER DETAILS LAYOUT POLISH
+   ========================================================= */
+
+.customer-details-page {
+  width: 100%;
+}
+
+.customer-details-page .page-header {
+  margin-bottom: 25px;
+}
+
+.customer-details-page .customer-tickets-section {
+  margin-top: 28px;
+}
+
+.customer-details-page .section-header {
+  margin-bottom: 14px;
+}
+
+.customer-details-page .table-card {
+  width: 100%;
+}
+
+.customer-details-page .empty-state {
+  padding: 35px 20px;
+
+  text-align: center;
+
+  color: #86868b;
+
+  font-size: 13px;
+}
    
 
 
