@@ -1826,6 +1826,43 @@ button {
   font-weight: 600;
 }
 
+/* =========================================================
+   STEP 25 — CUSTOMER TICKETS PREMIUM SECTION
+   ========================================================= */
+
+.customer-tickets-section {
+  margin-top: 30px;
+}
+
+.customer-tickets-section .section-header {
+  margin-bottom: 16px;
+}
+
+.customer-tickets-section .table-card {
+  border-radius: 18px;
+}
+
+.customer-tickets-section .table-card th {
+  background: #242426;
+}
+
+.customer-tickets-section .table-card td {
+  background: #1c1c1e;
+}
+
+.customer-tickets-section .table-card tbody tr:hover td {
+  background: #242426;
+}
+
+.customer-tickets-section .empty-state {
+  padding: 35px 20px;
+
+  text-align: center;
+
+  color: #86868b;
+
+  font-size: 13px;
+}
 
 
    
