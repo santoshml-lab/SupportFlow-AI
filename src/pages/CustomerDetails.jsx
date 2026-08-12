@@ -269,7 +269,7 @@ function CustomerDetails({ customer, onBack, onEdit }) {
 
                     <td>
 
-                      <span
+                    <span
   className={`priority-badge ${
     ticket.priority === "High"
       ? "high"
@@ -280,6 +280,13 @@ function CustomerDetails({ customer, onBack, onEdit }) {
       : "low"
   }`}
 >
+  {ticket.priority}
+</span>
+  
+    
+      
+  
+
                         
                           
                             
@@ -291,7 +298,7 @@ function CustomerDetails({ customer, onBack, onEdit }) {
 
                     <td>
 
-                      <span
+                  <span
   className={`status-badge ${
     ticket.status === "Open"
       ? "open"
@@ -300,6 +307,17 @@ function CustomerDetails({ customer, onBack, onEdit }) {
       : "resolved"
   }`}
 >
+  {ticket.status}
+</span>
+  
+
+  
+    
+      
+      
+      
+
+
                         
                           
                             
