@@ -5,22 +5,25 @@
 
 :root {
   --apple-bg: #0b0b0f;
-  --apple-card: #1c1c1e;
-  --apple-card-light: #242426;
-
-  --apple-text: #f5f5f7;
+  --apple-white: #1c1c1e;
+  --apple-black: #f5f5f7;
   --apple-gray: #a1a1a6;
   --apple-light-gray: #86868b;
-
   --apple-border: #2c2c2e;
-
   --apple-blue: #0a84ff;
   --apple-blue-light: rgba(10, 132, 255, 0.14);
 
   --green: #34c759;
-  --orange: #ff9f0a;
-  --red: #ff453a;
-  --yellow: #ffd60a;
+  --green-light: rgba(52, 199, 89, 0.14);
+
+  --red: #ff3b30;
+  --red-light: rgba(255, 59, 48, 0.14);
+
+  --orange: #ff9500;
+  --orange-light: rgba(255, 149, 0, 0.14);
+
+  --yellow: #ffcc00;
+  --yellow-light: rgba(255, 204, 0, 0.14);
 
   --radius-sm: 10px;
   --radius-md: 14px;
@@ -29,6 +32,9 @@
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.25);
   --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
+  
+  
+  
 
 
 /* =========================================================
