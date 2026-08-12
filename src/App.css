@@ -1689,6 +1689,54 @@ button {
 .back-btn:active {
   transform: scale(0.97);
 }
+
+/* =========================================================
+   STEP 23 — EDIT CUSTOMER BUTTON
+   ========================================================= */
+
+.customer-profile-card + .stats {
+  margin-top: 20px;
+}
+
+.customer-details-page .new-ticket {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 11px 16px;
+
+  border-radius: 12px;
+
+  background: #0a84ff;
+  color: #ffffff;
+
+  border: none;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow:
+    0 6px 18px rgba(10, 132, 255, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.customer-details-page .new-ticket:hover {
+  background: #2196ff;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(10, 132, 255, 0.30);
+}
+
+.customer-details-page .new-ticket:active {
+  transform: scale(0.97);
+}
    
 
 
