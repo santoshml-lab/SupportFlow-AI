@@ -94,7 +94,7 @@ button {
 
   padding: 26px 18px;
 
-  background: rgba(28, 28, 30, 0.88);
+  background: #1c1c1e;
 
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
