@@ -1737,7 +1737,94 @@ button {
 .customer-details-page .new-ticket:active {
   transform: scale(0.97);
 }
-   
+
+/* =========================================================
+   STEP 24 — CUSTOMER PROFILE PREMIUM
+   ========================================================= */
+
+.customer-profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  padding: 24px;
+}
+
+.customer-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: linear-gradient(
+    135deg,
+    #0a84ff,
+    #5e5ce6
+  );
+
+  color: #ffffff;
+
+  border-radius: 17px;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  box-shadow:
+    0 8px 22px rgba(10, 132, 255, 0.20);
+}
+
+.customer-profile h2 {
+  margin: 0;
+
+  color: #f5f5f7;
+
+  font-size: 21px;
+  font-weight: 700;
+
+  letter-spacing: -0.5px;
+}
+
+.customer-profile p {
+  margin: 5px 0 9px;
+
+  color: #86868b;
+
+  font-size: 12px;
+}
+
+.customer-id {
+  text-align: right;
+}
+
+.customer-id span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #86868b;
+
+  font-size: 11px;
+}
+
+.customer-id strong {
+  color: #f5f5f7;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
 
 
 
