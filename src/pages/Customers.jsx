@@ -1,60 +1,38 @@
 import { useEffect, useState } from "react";
 import CustomerDetails from "./CustomerDetails";
+import { supabase } from "../lib/supabase";
 
-const initialCustomers = [
-  {
-    id: "CUS-1001",
-    name: "John Doe",
-    email: "john@example.com",
-    tickets: 8,
-    openTickets: 2,
-    status: "Active",
-  },
-  {
-    id: "CUS-1002",
-    name: "Alex Smith",
-    email: "alex@example.com",
-    tickets: 5,
-    openTickets: 1,
-    status: "Active",
-  },
-  {
-    id: "CUS-1003",
-    name: "Maria Khan",
-    email: "maria@example.com",
-    tickets: 12,
-    openTickets: 4,
-    status: "Active",
-  },
-  {
-    id: "CUS-1004",
-    name: "David Lee",
-    email: "david@example.com",
-    tickets: 3,
-    openTickets: 0,
-    status: "Inactive",
-  },
-  {
-    id: "CUS-1005",
-    name: "Emma Wilson",
-    email: "emma@example.com",
-    tickets: 7,
-    openTickets: 2,
-    status: "Active",
-  },
-  {
-    id: "CUS-1006",
-    name: "Ryan Brown",
-    email: "ryan@example.com",
-    tickets: 4,
-    openTickets: 0,
-    status: "Active",
-  },
-];
+
+
+    
+    
 
 function Customers({ selectedCustomerId, onCustomerSelected }) {
-  const [customers, setCustomers] = useState(initialCustomers);
-  const [search, setSearch] = useState("");
+  const [customers, setCustomers] = useState([]);
+const [search, setSearch] = useState("");
+  useEffect(() => {
+  const fetchCustomers = async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("customers")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching customers:", error);
+      setLoading(false);
+      return;
+    }
+
+    setCustomers(data || []);
+    setLoading(false);
+  };
+
+  fetchCustomers();
+}, []);
+const [loading, setLoading] = useState(true);
+  
 
   const [showModal, setShowModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
