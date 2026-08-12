@@ -2,15 +2,30 @@ import { useEffect, useState } from "react";
 import CustomerDetails from "./CustomerDetails";
 import { supabase } from "../lib/supabase";
 
-
-
-    
-    
-
 function Customers({ selectedCustomerId, onCustomerSelected }) {
   const [customers, setCustomers] = useState([]);
-const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    status: "Active",
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  // =========================================================
+  // LOAD CUSTOMERS FROM SUPABASE
+  // =========================================================
+
   useEffect(() => {
+    fetchCustomers();
+  }, []);
+
   const fetchCustomers = async () => {
     setLoading(true);
 
@@ -20,7 +35,8 @@ const [search, setSearch] = useState("");
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching customers:", error);
+      console.error("Error loading customers:", error);
+      alert("Could not load customers.");
       setLoading(false);
       return;
     }
@@ -29,16 +45,13 @@ const [search, setSearch] = useState("");
     setLoading(false);
   };
 
-  fetchCustomers();
-}, []);
-const [loading, setLoading] = useState(true);
-  
+  // =========================================================
+  // SELECT CUSTOMER FROM TICKET
+  // =========================================================
 
-  const [showModal, setShowModal] = useState(false);
-  const [editingCustomer, setEditingCustomer] = useState(null);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
   useEffect(() => {
-  if (selectedCustomerId) {
+    if (!selectedCustomerId) return;
+
     const customer = customers.find(
       (customer) => customer.id === selectedCustomerId
     );
@@ -46,48 +59,56 @@ const [loading, setLoading] = useState(true);
     if (customer) {
       setSelectedCustomer(customer);
     }
-  }
-}, [selectedCustomerId, customers]);
+  }, [selectedCustomerId, customers]);
+
+  // =========================================================
+  // CUSTOMER DETAILS FROM TICKET
+  // =========================================================
+
   const customerFromTicket = customers.find(
-  (customer) => customer.id === selectedCustomerId
-);
-
-if (selectedCustomerId && customerFromTicket) {
-  return (
-    <CustomerDetails
-      customer={customerFromTicket}
-      onBack={() => {
-        onCustomerSelected();
-        setSelectedCustomer(null);
-      }}
-      onEdit={() => {
-        setEditingCustomer(customerFromTicket);
-        setForm({
-          name: customerFromTicket.name,
-          email: customerFromTicket.email,
-          status: customerFromTicket.status,
-        });
-        setShowModal(true);
-      }}
-    />
+    (customer) => customer.id === selectedCustomerId
   );
-}
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    status: "Active",
-  });
+  if (selectedCustomerId && customerFromTicket) {
+    return (
+      <CustomerDetails
+        customer={customerFromTicket}
+        onBack={() => {
+          onCustomerSelected();
+          setSelectedCustomer(null);
+        }}
+        onEdit={() => {
+          setEditingCustomer(customerFromTicket);
+
+          setForm({
+            name: customerFromTicket.name,
+            email: customerFromTicket.email,
+            status: customerFromTicket.status,
+          });
+
+          setShowModal(true);
+        }}
+      />
+    );
+  }
+
+  // =========================================================
+  // SEARCH
+  // =========================================================
 
   const filteredCustomers = customers.filter((customer) => {
     const query = search.toLowerCase();
 
     return (
-      customer.name.toLowerCase().includes(query) ||
-      customer.email.toLowerCase().includes(query) ||
-      customer.id.toLowerCase().includes(query)
+      customer.name?.toLowerCase().includes(query) ||
+      customer.email?.toLowerCase().includes(query) ||
+      customer.id?.toLowerCase().includes(query)
     );
   });
+
+  // =========================================================
+  // STATS
+  // =========================================================
 
   const totalCustomers = customers.length;
 
@@ -96,14 +117,18 @@ if (selectedCustomerId && customerFromTicket) {
   ).length;
 
   const totalTickets = customers.reduce(
-    (total, customer) => total + customer.tickets,
+    (total, customer) => total + (customer.tickets || 0),
     0
   );
 
   const openTickets = customers.reduce(
-    (total, customer) => total + customer.openTickets,
+    (total, customer) => total + (customer.openTickets || 0),
     0
   );
+
+  // =========================================================
+  // ADD CUSTOMER MODAL
+  // =========================================================
 
   const openAddModal = () => {
     setEditingCustomer(null);
@@ -117,6 +142,10 @@ if (selectedCustomerId && customerFromTicket) {
     setShowModal(true);
   };
 
+  // =========================================================
+  // EDIT CUSTOMER MODAL
+  // =========================================================
+
   const openEditModal = (customer) => {
     setEditingCustomer(customer);
 
@@ -129,12 +158,20 @@ if (selectedCustomerId && customerFromTicket) {
     setShowModal(true);
   };
 
+  // =========================================================
+  // CLOSE MODAL
+  // =========================================================
+
   const closeModal = () => {
     setShowModal(false);
     setEditingCustomer(null);
   };
 
-  const handleSubmit = (e) => {
+  // =========================================================
+  // ADD / EDIT CUSTOMER
+  // =========================================================
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.name.trim() || !form.email.trim()) {
@@ -142,48 +179,99 @@ if (selectedCustomerId && customerFromTicket) {
       return;
     }
 
+    // =======================================================
+    // EDIT EXISTING CUSTOMER
+    // =======================================================
+
     if (editingCustomer) {
+      const { data, error } = await supabase
+        .from("customers")
+        .update({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          status: form.status,
+        })
+        .eq("id", editingCustomer.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error updating customer:", error);
+        alert("Could not update customer.");
+        return;
+      }
+
       setCustomers((currentCustomers) =>
         currentCustomers.map((customer) =>
           customer.id === editingCustomer.id
-            ? {
-                ...customer,
-                name: form.name,
-                email: form.email,
-                status: form.status,
-              }
+            ? data
             : customer
         )
       );
-    } else {
-      const newCustomer = {
-        id: `CUS-${1000 + customers.length + 1}`,
-        name: form.name,
-        email: form.email,
-        tickets: 0,
-        openTickets: 0,
-        status: form.status,
-      };
 
-      setCustomers((currentCustomers) => [
-        ...currentCustomers,
-        newCustomer,
-      ]);
+      setSelectedCustomer(data);
+
+      closeModal();
+
+      return;
     }
+
+    // =======================================================
+    // ADD NEW CUSTOMER
+    // =======================================================
+
+    const newCustomerId = `CUS-${Date.now()}`;
+
+    const newCustomer = {
+      id: newCustomerId,
+      name: form.name.trim(),
+      email: form.email.trim(),
+      tickets: 0,
+      openTickets: 0,
+      status: form.status,
+    };
+
+    const { data, error } = await supabase
+      .from("customers")
+      .insert([newCustomer])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error adding customer:", error);
+      alert("Could not save customer to database.");
+      return;
+    }
+
+    setCustomers((currentCustomers) => [
+      data,
+      ...currentCustomers,
+    ]);
 
     closeModal();
   };
+
+  // =========================================================
+  // SELECT CUSTOMER
+  // =========================================================
+
   if (selectedCustomer) {
-  return (
-    <CustomerDetails
-      customer={selectedCustomer}
-      onBack={() => setSelectedCustomer(null)}
-      onEdit={() => {
-        openEditModal(selectedCustomer);
-      }}
-    />
-  );
+    return (
+      <CustomerDetails
+        customer={selectedCustomer}
+        onBack={() => {
+          setSelectedCustomer(null);
+        }}
+        onEdit={() => {
+          openEditModal(selectedCustomer);
+        }}
+      />
+    );
   }
+
+  // =========================================================
+  // PAGE
+  // =========================================================
 
   return (
     <div className="customers-page">
@@ -209,8 +297,7 @@ if (selectedCustomerId && customerFromTicket) {
 
       </div>
 
-
-      {/* ================= CUSTOMER STATS ================= */}
+      {/* ================= STATS ================= */}
 
       <section className="stats">
 
@@ -234,7 +321,6 @@ if (selectedCustomerId && customerFromTicket) {
 
         </div>
 
-
         <div className="stat-card">
 
           <div className="stat-icon green">
@@ -255,7 +341,6 @@ if (selectedCustomerId && customerFromTicket) {
 
         </div>
 
-
         <div className="stat-card">
 
           <div className="stat-icon orange">
@@ -275,7 +360,6 @@ if (selectedCustomerId && customerFromTicket) {
           </div>
 
         </div>
-
 
         <div className="stat-card">
 
@@ -299,7 +383,6 @@ if (selectedCustomerId && customerFromTicket) {
 
       </section>
 
-
       {/* ================= SEARCH ================= */}
 
       <div className="customer-toolbar">
@@ -315,161 +398,134 @@ if (selectedCustomerId && customerFromTicket) {
 
       </div>
 
-
       {/* ================= CUSTOMER TABLE ================= */}
 
       <div className="table-card">
 
-        <table>
+        {loading ? (
+          <div className="empty-state">
+            Loading customers...
+          </div>
+        ) : (
+          <table>
 
-          <thead>
+            <thead>
 
-            <tr>
+              <tr>
 
-              <th>Customer</th>
-
-              <th>Customer ID</th>
-
-              <th>Total Tickets</th>
-
-              <th>Open Tickets</th>
-
-              <th>Status</th>
-
-              <th>Action</th>
-
-            </tr>
-
-          </thead>
-
-
-          <tbody>
-
-            {filteredCustomers.map((customer) => (
-
-              <tr key={customer.id}>
-
-                <td>
-
-                  <div className="customer">
-
-                    <div className="avatar small">
-
-                      {customer.name
-                        .split(" ")
-                        .map((name) => name[0])
-                        .join("")}
-
-                    </div>
-
-                    <div>
-
-                      <strong>
-                        {customer.name}
-                      </strong>
-
-                      <span>
-                        {customer.email}
-                      </span>
-
-                    </div>
-
-                  </div>
-
-                </td>
-
-
-                <td>
-
-                  <strong>
-                    {customer.id}
-                  </strong>
-
-                </td>
-
-
-                <td>
-                  {customer.tickets}
-                </td>
-
-
-                <td>
-                  {customer.openTickets}
-                </td>
-
-
-                <td>
-
-                  <span
-                    className={`badge ${
-                      customer.status === "Active"
-                        ? "open"
-                        : "progress"
-                    }`}
-                  >
-                    {customer.status}
-                  </span>
-
-                </td>
-
-
-                <td>
-
-  <button
-    className="view-btn"
-    onClick={() => setSelectedCustomer(customer)}
-  >
-    👁️ View
-  </button>
-
-  <button
-    className="edit-btn"
-    onClick={() => openEditModal(customer)}
-  >
-    ✏️ Edit
-  </button>
-
-</td>
-
-                  
-
-
-    
-    
-      
-
-  
-
-
-                    
-                    
-                      
-                    
-                  
-                    
-                  
-
-                
+                <th>Customer</th>
+                <th>Customer ID</th>
+                <th>Total Tickets</th>
+                <th>Open Tickets</th>
+                <th>Status</th>
+                <th>Action</th>
 
               </tr>
 
-            ))}
+            </thead>
 
-          </tbody>
+            <tbody>
 
-        </table>
+              {filteredCustomers.map((customer) => (
 
+                <tr key={customer.id}>
 
-        {filteredCustomers.length === 0 && (
+                  <td>
 
-          <div className="empty-state">
-            No customers found.
-          </div>
+                    <div className="customer">
 
+                      <div className="avatar small">
+
+                        {customer.name
+                          ?.split(" ")
+                          .map((name) => name[0])
+                          .join("")}
+
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          {customer.name}
+                        </strong>
+
+                        <span>
+                          {customer.email}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+                  <td>
+                    <strong>
+                      {customer.id}
+                    </strong>
+                  </td>
+
+                  <td>
+                    {customer.tickets || 0}
+                  </td>
+
+                  <td>
+                    {customer.openTickets || 0}
+                  </td>
+
+                  <td>
+
+                    <span
+                      className={`badge ${
+                        customer.status === "Active"
+                          ? "open"
+                          : "progress"
+                      }`}
+                    >
+                      {customer.status}
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <button
+                      className="view-btn"
+                      onClick={() =>
+                        setSelectedCustomer(customer)
+                      }
+                    >
+                      👁️ View
+                    </button>
+
+                    <button
+                      className="edit-btn"
+                      onClick={() =>
+                        openEditModal(customer)
+                      }
+                    >
+                      ✏️ Edit
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
         )}
 
-      </div>
+        {!loading &&
+          filteredCustomers.length === 0 && (
+            <div className="empty-state">
+              No customers found.
+            </div>
+          )}
 
+      </div>
 
       {/* ================= ADD / EDIT MODAL ================= */}
 
@@ -497,7 +553,6 @@ if (selectedCustomerId && customerFromTicket) {
 
               </div>
 
-
               <button
                 className="modal-close"
                 onClick={closeModal}
@@ -506,7 +561,6 @@ if (selectedCustomerId && customerFromTicket) {
               </button>
 
             </div>
-
 
             <form onSubmit={handleSubmit}>
 
@@ -530,7 +584,6 @@ if (selectedCustomerId && customerFromTicket) {
 
               </div>
 
-
               <div className="form-group">
 
                 <label>
@@ -551,7 +604,6 @@ if (selectedCustomerId && customerFromTicket) {
 
               </div>
 
-
               <div className="form-group">
 
                 <label>
@@ -567,6 +619,7 @@ if (selectedCustomerId && customerFromTicket) {
                     })
                   }
                 >
+
                   <option value="Active">
                     Active
                   </option>
@@ -579,7 +632,6 @@ if (selectedCustomerId && customerFromTicket) {
 
               </div>
 
-
               <div className="modal-actions">
 
                 <button
@@ -589,7 +641,6 @@ if (selectedCustomerId && customerFromTicket) {
                 >
                   Cancel
                 </button>
-
 
                 <button
                   type="submit"
