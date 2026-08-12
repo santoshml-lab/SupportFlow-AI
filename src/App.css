@@ -72,3 +72,452 @@ button {
   cursor: pointer;
 }
 
+/* =========================================================
+   SIDEBAR — APPLE DARK STYLE
+   ========================================================= */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  width: 260px;
+  height: 100vh;
+
+  padding: 26px 18px;
+
+  background: rgba(28, 28, 30, 0.88);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  border-right: 1px solid var(--apple-border);
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 100;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 6px 8px 28px;
+}
+
+.logo-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--apple-blue);
+  color: white;
+
+  border-radius: 13px;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  box-shadow:
+    0 6px 18px rgba(10, 132, 255, 0.25);
+}
+
+.logo h2 {
+  margin: 0;
+
+  color: var(--apple-text);
+
+  font-size: 19px;
+  font-weight: 700;
+
+  letter-spacing: -0.4px;
+}
+
+.logo span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--apple-light-gray);
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-item {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 13px;
+
+  background: transparent;
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  color: var(--apple-gray);
+
+  font-size: 14px;
+  font-weight: 500;
+
+  text-align: left;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-item span {
+  width: 22px;
+
+  font-size: 17px;
+  text-align: center;
+}
+
+.nav-item:hover {
+  background: var(--apple-card-light);
+  color: var(--apple-text);
+}
+
+.nav-item.active {
+  background: var(--apple-blue-light);
+
+  border-color: rgba(10, 132, 255, 0.2);
+
+  color: var(--apple-blue);
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   SIDEBAR BOTTOM
+   ========================================================= */
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.profile-mini {
+  margin-top: 18px;
+  padding: 18px 8px 4px;
+
+  border-top: 1px solid var(--apple-border);
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-mini strong {
+  display: block;
+
+  color: var(--apple-text);
+
+  font-size: 13px;
+}
+
+.profile-mini span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--apple-light-gray);
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   STEP 3 — MAIN DASHBOARD + STATS
+   ========================================================= */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  background: var(--apple-bg);
+}
+
+
+/* =========================================================
+   MAIN AREA
+   ========================================================= */
+
+.main {
+  width: calc(100% - 260px);
+
+  margin-left: 260px;
+
+  min-height: 100vh;
+
+  padding: 34px 42px;
+
+  background: var(--apple-bg);
+}
+
+
+/* =========================================================
+   PAGE / TOP HEADER
+   ========================================================= */
+
+.topbar,
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 28px;
+}
+
+.topbar h1,
+.page-header h1 {
+  margin: 0;
+
+  color: var(--apple-text);
+
+  font-size: 32px;
+  font-weight: 700;
+
+  letter-spacing: -1.1px;
+}
+
+.topbar p,
+.page-header p {
+  margin: 7px 0 0;
+
+  color: var(--apple-gray);
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   TOPBAR ACTIONS
+   ========================================================= */
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification {
+  position: relative;
+
+  width: 42px;
+  height: 42px;
+
+  background: var(--apple-card);
+
+  border: 1px solid var(--apple-border);
+
+  border-radius: 12px;
+
+  color: var(--apple-text);
+
+  box-shadow: var(--shadow-sm);
+
+  font-size: 17px;
+}
+
+.notification:hover {
+  background: var(--apple-card-light);
+}
+
+.notification span {
+  position: absolute;
+
+  top: 8px;
+  right: 8px;
+
+  width: 7px;
+  height: 7px;
+
+  background: var(--red);
+
+  border-radius: 50%;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+.new-ticket {
+  border: none;
+
+  padding: 11px 17px;
+
+  background: var(--apple-blue);
+
+  color: white;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow:
+    0 5px 15px rgba(10, 132, 255, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.new-ticket:hover {
+  background: #3195ff;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 20px rgba(10, 132, 255, 0.30);
+}
+
+.new-ticket:active {
+  transform: scale(0.98);
+}
+
+
+/* =========================================================
+   STATS
+   ========================================================= */
+
+.stats {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 28px;
+}
+
+
+/* =========================================================
+   STAT CARD
+   ========================================================= */
+
+.stat-card {
+  min-height: 125px;
+
+  padding: 21px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  background: var(--apple-card);
+
+  border: 1px solid var(--apple-border);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+
+  border-color: #3a3a3c;
+
+  box-shadow: var(--shadow-md);
+}
+
+
+/* =========================================================
+   STAT ICON
+   ========================================================= */
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  font-size: 20px;
+}
+
+.stat-icon.blue {
+  background: var(--apple-blue-light);
+  color: var(--apple-blue);
+}
+
+.stat-icon.green {
+  background: rgba(52, 199, 89, 0.14);
+  color: var(--green);
+}
+
+.stat-icon.red {
+  background: rgba(255, 69, 58, 0.14);
+  color: var(--red);
+}
+
+.stat-icon.orange {
+  background: rgba(255, 159, 10, 0.14);
+  color: var(--orange);
+}
+
+
+/* =========================================================
+   STAT TEXT
+   ========================================================= */
+
+.stat-card span {
+  color: var(--apple-gray);
+
+  font-size: 12px;
+}
+
+.stat-card h2 {
+  margin: 5px 0 3px;
+
+  color: var(--apple-text);
+
+  font-size: 25px;
+
+  letter-spacing: -0.6px;
+}
+
+.stat-card small {
+  color: var(--apple-light-gray);
+
+  font-size: 11px;
+}
+
