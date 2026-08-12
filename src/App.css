@@ -444,6 +444,271 @@ button {
 
   font-size: 11px;
 }
+
+/* =========================================================
+   STEP 6 — DASHBOARD HEADER + MAIN CONTENT
+   ========================================================= */
+
+.main {
+  width: calc(100% - 260px);
+  margin-left: 260px;
+
+  min-height: 100vh;
+
+  padding: 34px 42px;
+
+  background: var(--apple-bg);
+}
+
+
+/* =========================================================
+   TOPBAR / PAGE HEADER
+   ========================================================= */
+
+.topbar,
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 30px;
+
+  gap: 20px;
+}
+
+
+/* =========================================================
+   HEADER TEXT
+   ========================================================= */
+
+.topbar h1,
+.page-header h1 {
+  margin: 0;
+
+  color: var(--apple-text);
+
+  font-size: 32px;
+  font-weight: 700;
+
+  letter-spacing: -1.1px;
+  line-height: 1.15;
+}
+
+
+.topbar p,
+.page-header p {
+  margin: 7px 0 0;
+
+  color: var(--apple-gray);
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   TOPBAR ACTIONS
+   ========================================================= */
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   NOTIFICATION
+   ========================================================= */
+
+.notification {
+  position: relative;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #1c1c1e;
+
+  border: 1px solid #2c2c2e;
+
+  border-radius: 12px;
+
+  color: var(--apple-text);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.notification:hover {
+  background: #242426;
+
+  transform: translateY(-1px);
+}
+
+
+.notification span {
+  position: absolute;
+
+  top: 8px;
+  right: 8px;
+
+  width: 7px;
+  height: 7px;
+
+  background: var(--red);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 2px #1c1c1e;
+}
+
+
+/* =========================================================
+   NEW TICKET BUTTON
+   ========================================================= */
+
+.new-ticket {
+  border: none;
+
+  padding: 11px 17px;
+
+  background: var(--apple-blue);
+
+  color: white;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow:
+    0 6px 18px rgba(10, 132, 255, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.new-ticket:hover {
+  background: #2196ff;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 9px 24px rgba(10, 132, 255, 0.32);
+}
+
+
+.new-ticket:active {
+  transform: scale(0.98);
+}
+
+
+/* =========================================================
+   SECTION SPACING
+   ========================================================= */
+
+.analyzer-section,
+.result-section,
+.tickets-section,
+.customer-tickets-section {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+
+  gap: 15px;
+}
+
+
+.section-header h2 {
+  margin: 0;
+
+  color: var(--apple-text);
+
+  font-size: 20px;
+  font-weight: 700;
+
+  letter-spacing: -0.4px;
+}
+
+
+.section-header p {
+  margin: 5px 0 0;
+
+  color: var(--apple-gray);
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   MOBILE HEADER
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+  .main {
+    width: calc(100% - 210px);
+
+    margin-left: 210px;
+
+    padding: 25px;
+  }
+
+  .topbar h1,
+  .page-header h1 {
+    font-size: 28px;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .main {
+    width: 100%;
+
+    margin-left: 0;
+
+    padding: 20px;
+  }
+
+  .topbar,
+  .page-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  .topbar-actions {
+    width: 100%;
+  }
+
+}
    
    
    
