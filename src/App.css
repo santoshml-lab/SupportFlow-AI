@@ -1388,6 +1388,63 @@ button {
     font-size: 26px;
   }
 }
+
+/* =========================================================
+   STEP 16 — CUSTOMER DETAILS RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  .customer-details-page .page-header {
+    gap: 18px;
+  }
+
+  .customer-details-page .page-header h1 {
+    font-size: 26px;
+  }
+
+  .customer-profile-card {
+    padding: 20px;
+    gap: 18px;
+  }
+
+  .customer-profile {
+    width: 100%;
+  }
+
+  .customer-profile h2 {
+    font-size: 20px;
+  }
+
+  .customer-id {
+    width: 100%;
+    text-align: left;
+    padding-top: 15px;
+    border-top: 1px solid var(--apple-border);
+  }
+
+  .customer-details-page .stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .customer-details-page .stat-card {
+    min-height: 105px;
+  }
+
+  .customer-tickets-section {
+    overflow-x: auto;
+  }
+
+  .customer-tickets-section .table-card {
+    overflow-x: auto;
+  }
+
+  .customer-tickets-section table {
+    min-width: 650px;
+  }
+
+}
    
    
    
