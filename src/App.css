@@ -1536,7 +1536,43 @@ button {
 
   font-size: 13px;
 }
-   
+
+/* =========================================================
+   STEP 19 — CUSTOMER STATUS BADGE
+   ========================================================= */
+
+.customer-profile-card .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  border: 1px solid transparent;
+}
+
+/* Active */
+
+.customer-profile-card .badge.open {
+  background: rgba(52, 199, 89, 0.14);
+  color: #34c759;
+
+  border-color: rgba(52, 199, 89, 0.22);
+}
+
+/* Inactive */
+
+.customer-profile-card .badge.progress {
+  background: rgba(255, 149, 0, 0.14);
+  color: #ff9f0a;
+
+  border-color: rgba(255, 149, 0, 0.22);
+}
    
 
 
