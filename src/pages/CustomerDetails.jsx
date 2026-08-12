@@ -270,34 +270,45 @@ function CustomerDetails({ customer, onBack, onEdit }) {
                     <td>
 
                       <span
-                        className={`badge ${
-                          ticket.priority === "High"
-                            ? "high"
-                            : ticket.priority === "Medium"
-                            ? "medium"
-                            : ticket.priority === "Critical"
-                            ? "critical"
-                            : "open"
-                        }`}
-                      >
-                        {ticket.priority}
-                      </span>
+  className={`priority-badge ${
+    ticket.priority === "High"
+      ? "high"
+      : ticket.priority === "Medium"
+      ? "medium"
+      : ticket.priority === "Critical"
+      ? "critical"
+      : "low"
+  }`}
+>
+                        
+                          
+                            
+                            
+                            
+                            
 
                     </td>
 
                     <td>
 
                       <span
-                        className={`badge ${
-                          ticket.status === "Open"
-                            ? "open"
-                            : ticket.status === "In Progress"
-                            ? "progress"
-                            : "open"
-                        }`}
-                      >
-                        {ticket.status}
-                      </span>
+  className={`status-badge ${
+    ticket.status === "Open"
+      ? "open"
+      : ticket.status === "In Progress"
+      ? "in-progress"
+      : "resolved"
+  }`}
+>
+                        
+                          
+                            
+                            
+                          
+                        
+                      
+                        
+                      
 
                     </td>
 
