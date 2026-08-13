@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import TicketDetails from "./TicketDetails";
 import { supabase } from "../lib/supabase";
 
-
 function Tickets({ onViewCustomer }) {
   const [tickets, setTickets] = useState([]);
   const [search, setSearch] = useState("");
@@ -11,8 +10,6 @@ function Tickets({ onViewCustomer }) {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [ticketsData, setTicketsData] = useState([]);
-const [loading, setLoading] = useState(true);
 
   /* =========================================================
      FETCH TICKETS FROM SUPABASE
@@ -29,7 +26,17 @@ const [loading, setLoading] = useState(true);
     const { data, error } = await supabase
       .from("tickets")
       .select(`
-        *,
+        id,
+        created_at,
+        customer_id,
+        subject,
+        status,
+        priority,
+        category,
+        sentiment,
+        ai_summary,
+        ai_suggested_reply,
+        assigned_to,
         customers (
           id,
           name,
@@ -61,7 +68,7 @@ const [loading, setLoading] = useState(true);
         ticket.subject || "No subject",
 
       category:
-        ticket.category || "General",
+        formatText(ticket.category || "General"),
 
       priority:
         formatText(ticket.priority || "medium"),
@@ -75,8 +82,8 @@ const [loading, setLoading] = useState(true);
       ai_summary:
         ticket.ai_summary || "",
 
-      ai_suggested_rep:
-        ticket.ai_suggested_rep || "",
+      ai_suggested_reply:
+        ticket.ai_suggested_reply || "",
 
       assigned_to:
         ticket.assigned_to,
@@ -121,7 +128,7 @@ const [loading, setLoading] = useState(true);
     const matchesSearch =
       ticket.customer.toLowerCase().includes(query) ||
       ticket.subject.toLowerCase().includes(query) ||
-      ticket.id.toLowerCase().includes(query);
+      ticket.id.toString().toLowerCase().includes(query);
 
     const matchesStatus =
       status === "All" ||
@@ -146,11 +153,7 @@ const [loading, setLoading] = useState(true);
     return (
       <TicketDetails
         ticket={selectedTicket}
-
-        onBack={() =>
-          setSelectedTicket(null)
-        }
-
+        onBack={() => setSelectedTicket(null)}
         onViewCustomer={(customerId) => {
           if (onViewCustomer) {
             onViewCustomer(customerId);
@@ -195,7 +198,7 @@ const [loading, setLoading] = useState(true);
   return (
     <div className="tickets-page">
 
-      {/* ================= HEADER ================= */}
+      {/* HEADER */}
 
       <div className="page-header">
 
@@ -214,7 +217,7 @@ const [loading, setLoading] = useState(true);
       </div>
 
 
-      {/* ================= ERROR ================= */}
+      {/* ERROR */}
 
       {error && (
         <div className="empty-state">
@@ -223,7 +226,7 @@ const [loading, setLoading] = useState(true);
       )}
 
 
-      {/* ================= TOOLBAR ================= */}
+      {/* TOOLBAR */}
 
       <div className="ticket-toolbar">
 
@@ -231,96 +234,49 @@ const [loading, setLoading] = useState(true);
           type="text"
           placeholder="🔍 Search tickets..."
           value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
+          onChange={(e) => setSearch(e.target.value)}
         />
-
 
         <select
           value={status}
-          onChange={(e) =>
-            setStatus(e.target.value)
-          }
+          onChange={(e) => setStatus(e.target.value)}
         >
-
-          <option value="All">
-            All Status
-          </option>
-
-          <option value="Open">
-            Open
-          </option>
-
-          <option value="In Progress">
-            In Progress
-          </option>
-
-          <option value="Resolved">
-            Resolved
-          </option>
-
+          <option value="All">All Status</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
         </select>
-
 
         <select
           value={priority}
-          onChange={(e) =>
-            setPriority(e.target.value)
-          }
+          onChange={(e) => setPriority(e.target.value)}
         >
-
-          <option value="All">
-            All Priority
-          </option>
-
-          <option value="Critical">
-            Critical
-          </option>
-
-          <option value="High">
-            High
-          </option>
-
-          <option value="Medium">
-            Medium
-          </option>
-
-          <option value="Low">
-            Low
-          </option>
-
+          <option value="All">All Priority</option>
+          <option value="Critical">Critical</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
         </select>
 
       </div>
 
 
-      {/* ================= TICKETS TABLE ================= */}
+      {/* TICKETS TABLE */}
 
       <div className="tickets-page-card">
 
         <table>
 
           <thead>
-
             <tr>
-
               <th>Ticket</th>
-
               <th>Customer</th>
-
               <th>Subject</th>
-
               <th>Category</th>
-
               <th>Priority</th>
-
               <th>Status</th>
-
             </tr>
-
           </thead>
-
 
           <tbody>
 
@@ -328,41 +284,27 @@ const [loading, setLoading] = useState(true);
 
               <tr
                 key={ticket.id}
-                onClick={() =>
-                  setSelectedTicket(ticket)
-                }
+                onClick={() => setSelectedTicket(ticket)}
                 className="ticket-row"
               >
 
-                {/* ================= TICKET ================= */}
-
                 <td>
-
                   <strong>
                     {ticket.id}
                   </strong>
-
                 </td>
-
-
-                {/* ================= CUSTOMER ================= */}
 
                 <td>
 
                   <div className="customer">
 
                     <div className="avatar small">
-
                       {ticket.customer
                         .split(" ")
-                        .map(
-                          (name) => name[0]
-                        )
+                        .map((name) => name[0])
                         .join("")
                         .slice(0, 2)}
-
                     </div>
-
 
                     <div>
 
@@ -380,35 +322,25 @@ const [loading, setLoading] = useState(true);
 
                 </td>
 
-
-                {/* ================= SUBJECT ================= */}
-
                 <td>
                   {ticket.subject}
                 </td>
-
-
-                {/* ================= CATEGORY ================= */}
 
                 <td>
                   {ticket.category}
                 </td>
 
-
-                {/* ================= PRIORITY ================= */}
-
                 <td>
 
                   <span
-                    className={`badge ${ticket.priority.toLowerCase()}`}
+                    className={`badge ${
+                      ticket.priority.toLowerCase()
+                    }`}
                   >
                     {ticket.priority}
                   </span>
 
                 </td>
-
-
-                {/* ================= STATUS ================= */}
 
                 <td>
 
@@ -421,9 +353,7 @@ const [loading, setLoading] = useState(true);
                         : "open"
                     }`}
                   >
-
                     {ticket.status}
-
                   </span>
 
                 </td>
@@ -437,14 +367,10 @@ const [loading, setLoading] = useState(true);
         </table>
 
 
-        {/* ================= EMPTY ================= */}
-
         {filteredTickets.length === 0 && !error && (
-
           <div className="empty-state">
             No tickets found.
           </div>
-
         )}
 
       </div>
