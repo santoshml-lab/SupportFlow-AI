@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TicketDetails from "./TicketDetails";
 import { supabase } from "../lib/supabase";
 
+
 function Tickets({ onViewCustomer }) {
   const [tickets, setTickets] = useState([]);
   const [search, setSearch] = useState("");
@@ -10,6 +11,8 @@ function Tickets({ onViewCustomer }) {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [ticketsData, setTicketsData] = useState([]);
+const [loading, setLoading] = useState(true);
 
   /* =========================================================
      FETCH TICKETS FROM SUPABASE
