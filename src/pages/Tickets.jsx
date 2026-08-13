@@ -10,6 +10,7 @@ function Tickets({ onViewCustomer }) {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showNewTicket, setShowNewTicket] = useState(false);
 
   /* =========================================================
      FETCH TICKETS FROM SUPABASE
@@ -210,9 +211,14 @@ function Tickets({ onViewCustomer }) {
           </p>
         </div>
 
-        <button className="new-ticket">
-          + New Ticket
-        </button>
+        <button
+  className="new-ticket"
+  onClick={() => setShowNewTicket(true)}
+>
+  + New Ticket
+</button>
+          
+        
 
       </div>
 
@@ -374,6 +380,42 @@ function Tickets({ onViewCustomer }) {
         )}
 
       </div>
+      {showNewTicket && (
+  <div className="modal-overlay">
+
+    <div className="customer-modal">
+
+      <div className="modal-header">
+
+        <div>
+          <h2>New Ticket</h2>
+          <p>Create a new support ticket</p>
+        </div>
+
+        <button
+          className="modal-close"
+          onClick={() => setShowNewTicket(false)}
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div className="modal-actions">
+
+        <button
+          className="cancel-btn"
+          onClick={() => setShowNewTicket(false)}
+        >
+          Cancel
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
 
     </div>
   );
