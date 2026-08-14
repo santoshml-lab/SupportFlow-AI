@@ -3,6 +3,7 @@ import Tickets from "./pages/Tickets";
 import Customers from "./pages/Customers";
 import Analytics from "./pages/Analytics";
 import Dashboard from "./pages/Dashboard";
+
 import "./App.css";
 
 function App() {
