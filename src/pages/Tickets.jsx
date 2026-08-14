@@ -468,9 +468,11 @@ function Tickets({ onViewCustomer }) {
               >
 
                 <td>
-                  <strong>
-                    {ticket.id}
-                  </strong>
+                  <strong title={ticket.id}>
+  {ticket.id.slice(0, 8)}...
+</strong>
+                    
+                  
                 </td>
 
                 <td>
