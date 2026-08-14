@@ -2,6 +2,7 @@ import { useState } from "react";
 import Tickets from "./pages/Tickets";
 import Customers from "./pages/Customers";
 import Analytics from "./pages/Analytics";
+import Dashboard from "./pages/Dashboard";
 import "./App.css";
 const API_URL = "https://finpilotai-2s9v.onrender.com";
 
@@ -183,8 +184,12 @@ function App() {
         {/* ================= DASHBOARD ================= */}
 
         {page === "dashboard" && (
+  <Dashboard
+    onViewTickets={() => setPage("tickets")}
+  />
+)}
 
-          <>
+          
 
             <header className="topbar">
 
