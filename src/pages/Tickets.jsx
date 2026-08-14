@@ -11,14 +11,103 @@ function Tickets({ onViewCustomer }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showNewTicket, setShowNewTicket] = useState(false);
+  const [customers, setCustomers] = useState([]);
+
+const [newTicket, setNewTicket] = useState({
+  customer_id: "",
+  subject: "",
+  category: "Billing",
+  priority: "medium",
+  status: "open",
+  sentiment: "neutral",
+  ai_summary: "",
+  ai_suggested_reply: "",
+});
+
+const [savingTicket, setSavingTicket] = useState(false);
 
   /* =========================================================
      FETCH TICKETS FROM SUPABASE
      ========================================================= */
 
   useEffect(() => {
-    fetchTickets();
-  }, []);
+  fetchTickets();
+  fetchCustomers();
+}, []);
+
+  const fetchCustomers = async () => {
+  const { data, error } = await supabase
+    .from("customers")
+    .select("id, name, email")
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching customers:", error);
+    return;
+  }
+
+  setCustomers(data || []);
+};
+
+  const createTicket = async (e) => {
+  e.preventDefault();
+
+  if (!newTicket.customer_id) {
+    alert("Please select a customer.");
+    return;
+  }
+
+  if (!newTicket.subject.trim()) {
+    alert("Please enter ticket subject.");
+    return;
+  }
+
+  setSavingTicket(true);
+
+  const { error } = await supabase
+    .from("tickets")
+    .insert([
+      {
+        customer_id: newTicket.customer_id,
+        subject: newTicket.subject.trim(),
+        category: newTicket.category,
+        priority: newTicket.priority,
+        status: newTicket.status,
+        sentiment: newTicket.sentiment,
+        ai_summary: newTicket.ai_summary.trim() || null,
+        ai_suggested_reply:
+          newTicket.ai_suggested_reply.trim() || null,
+        assigned_to: null,
+      },
+    ]);
+
+  if (error) {
+    console.error("Error creating ticket:", error);
+    alert("Could not save ticket database.");
+    setSavingTicket(false);
+    return;
+  }
+
+  setNewTicket({
+    customer_id: "",
+    subject: "",
+    category: "Billing",
+    priority: "medium",
+    status: "open",
+    sentiment: "neutral",
+    ai_summary: "",
+    ai_suggested_reply: "",
+  });
+
+  setShowNewTicket(false);
+  setSavingTicket(false);
+
+  await fetchTickets();
+
+  alert("Ticket created successfully! ✅");
+};
+    
+  
 
   const fetchTickets = async () => {
     setLoading(true);
@@ -401,21 +490,254 @@ function Tickets({ onViewCustomer }) {
 
       </div>
 
-      <div className="modal-actions">
 
-        <button
-          className="cancel-btn"
-          onClick={() => setShowNewTicket(false)}
-        >
-          Cancel
-        </button>
+      <form onSubmit={createTicket}>
 
-      </div>
+        {/* CUSTOMER */}
+
+        <div className="form-group">
+
+          <label>Customer</label>
+
+          <select
+            value={newTicket.customer_id}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                customer_id: e.target.value,
+              })
+            }
+          >
+
+            <option value="">
+              Select Customer
+            </option>
+
+            {customers.map((customer) => (
+              <option
+                key={customer.id}
+                value={customer.id}
+              >
+                {customer.name} — {customer.email}
+              </option>
+            ))}
+
+          </select>
+
+        </div>
+
+
+        {/* SUBJECT */}
+
+        <div className="form-group">
+
+          <label>Subject</label>
+
+          <input
+            type="text"
+            placeholder="e.g. Duplicate subscription charge"
+            value={newTicket.subject}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                subject: e.target.value,
+              })
+            }
+          />
+
+        </div>
+
+
+        {/* CATEGORY */}
+
+        <div className="form-group">
+
+          <label>Category</label>
+
+          <select
+            value={newTicket.category}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                category: e.target.value,
+              })
+            }
+          >
+            <option value="Billing">Billing</option>
+            <option value="Technical">Technical</option>
+            <option value="Account">Account</option>
+            <option value="Subscription">Subscription</option>
+            <option value="General">General</option>
+          </select>
+
+        </div>
+
+
+        {/* PRIORITY */}
+
+        <div className="form-group">
+
+          <label>Priority</label>
+
+          <select
+            value={newTicket.priority}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                priority: e.target.value,
+              })
+            }
+          >
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+
+        </div>
+
+
+        {/* STATUS */}
+
+        <div className="form-group">
+
+          <label>Status</label>
+
+          <select
+            value={newTicket.status}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                status: e.target.value,
+              })
+            }
+          >
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+
+        </div>
+
+
+        {/* SENTIMENT */}
+
+        <div className="form-group">
+
+          <label>Sentiment</label>
+
+          <select
+            value={newTicket.sentiment}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                sentiment: e.target.value,
+              })
+            }
+          >
+            <option value="positive">Positive</option>
+            <option value="neutral">Neutral</option>
+            <option value="negative">Negative</option>
+          </select>
+
+        </div>
+
+
+        {/* AI SUMMARY */}
+
+        <div className="form-group">
+
+          <label>AI Summary</label>
+
+          <textarea
+            placeholder="Optional AI summary"
+            value={newTicket.ai_summary}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                ai_summary: e.target.value,
+              })
+            }
+          />
+
+        </div>
+
+
+        {/* AI REPLY */}
+
+        <div className="form-group">
+
+          <label>AI Suggested Reply</label>
+
+          <textarea
+            placeholder="Optional suggested reply"
+            value={newTicket.ai_suggested_reply}
+            onChange={(e) =>
+              setNewTicket({
+                ...newTicket,
+                ai_suggested_reply: e.target.value,
+              })
+            }
+          />
+
+        </div>
+
+
+        {/* ACTIONS */}
+
+        <div className="modal-actions">
+
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={() => setShowNewTicket(false)}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="new-ticket"
+            disabled={savingTicket}
+          >
+            {savingTicket
+              ? "Creating..."
+              : "Create Ticket"}
+          </button>
+
+        </div>
+
+      </form>
 
     </div>
 
   </div>
 )}
+  
+
+    
+
+      
+
+        
+          
+          
+        
+
+        
+          
+          
+        
+          
+        
+
+      
+
+      
+        
+          
+          
+        
 
     </div>
   );
