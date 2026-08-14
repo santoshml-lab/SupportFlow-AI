@@ -1864,6 +1864,60 @@ button {
   font-size: 13px;
 }
 
+.tickets-page-card {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tickets-page-card table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+}
+
+.tickets-page-card th,
+.tickets-page-card td {
+  padding: 14px 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tickets-page-card th:nth-child(1) {
+  width: 120px;
+}
+
+.tickets-page-card th:nth-child(2) {
+  width: 220px;
+}
+
+.tickets-page-card th:nth-child(3) {
+  width: 240px;
+}
+
+.tickets-page-card th:nth-child(4) {
+  width: 120px;
+}
+
+.customer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customer > div:last-child {
+  min-width: 0;
+}
+
+.customer strong,
+.customer span {
+  display: block;
+}
+
+.customer span {
+  margin-top: 3px;
+  font-size: 13px;
+}
+
 
    
    
