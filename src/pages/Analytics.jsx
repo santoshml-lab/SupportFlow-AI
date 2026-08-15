@@ -5,6 +5,10 @@ function Analytics() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ===============================
+  // FETCH REAL TICKETS FROM SUPABASE
+  // ===============================
+
   const fetchTickets = async () => {
     setLoading(true);
 
@@ -28,6 +32,20 @@ function Analytics() {
     fetchTickets();
   }, []);
 
+  // ===============================
+  // NORMALIZE VALUES
+  // ===============================
+
+  const normalize = (value) =>
+    String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_-]+/g, " ");
+
+  // ===============================
+  // LOADING
+  // ===============================
+
   if (loading) {
     return (
       <div className="analytics-page">
@@ -41,57 +59,95 @@ function Analytics() {
     );
   }
 
+  // ===============================
+  // TICKET STATUS
+  // ===============================
+
   const totalTickets = tickets.length;
 
   const openTickets = tickets.filter(
-    (ticket) => ticket.status === "Open"
+    (ticket) => normalize(ticket.status) === "open"
   ).length;
 
   const inProgressTickets = tickets.filter(
-    (ticket) => ticket.status === "In Progress"
+    (ticket) =>
+      normalize(ticket.status) === "in progress" ||
+      normalize(ticket.status) === "inprogress"
   ).length;
 
   const resolvedTickets = tickets.filter(
-    (ticket) => ticket.status === "Resolved"
+    (ticket) =>
+      normalize(ticket.status) === "resolved" ||
+      normalize(ticket.status) === "closed"
   ).length;
 
+  // ===============================
+  // PRIORITY
+  // ===============================
+
   const criticalPriority = tickets.filter(
-    (ticket) => ticket.priority === "Critical"
+    (ticket) => normalize(ticket.priority) === "critical"
   ).length;
 
   const highPriority = tickets.filter(
-    (ticket) => ticket.priority === "High"
+    (ticket) => normalize(ticket.priority) === "high"
   ).length;
 
   const mediumPriority = tickets.filter(
-    (ticket) => ticket.priority === "Medium"
+    (ticket) => normalize(ticket.priority) === "medium"
   ).length;
 
   const lowPriority = tickets.filter(
-    (ticket) => ticket.priority === "Low"
+    (ticket) => normalize(ticket.priority) === "low"
   ).length;
 
+  // ===============================
+  // CATEGORIES
+  // ===============================
+
   const billingTickets = tickets.filter(
-    (ticket) => ticket.category === "Billing"
+    (ticket) => normalize(ticket.category) === "billing"
   ).length;
 
   const accountTickets = tickets.filter(
-    (ticket) => ticket.category === "Account"
+    (ticket) => normalize(ticket.category) === "account"
   ).length;
 
   const technicalTickets = tickets.filter(
-    (ticket) => ticket.category === "Technical"
+    (ticket) => normalize(ticket.category) === "technical"
   ).length;
 
   const generalTickets = tickets.filter(
-    (ticket) => ticket.category === "General"
+    (ticket) => normalize(ticket.category) === "general"
   ).length;
+
+  // ===============================
+  // PERCENTAGE
+  // ===============================
 
   const getPercentage = (value) => {
     if (!totalTickets) return 0;
 
     return Math.round((value / totalTickets) * 100);
   };
+
+  // ===============================
+  // PERFORMANCE
+  // ===============================
+
+  const resolutionRate = totalTickets
+    ? Math.round((resolvedTickets / totalTickets) * 100)
+    : 0;
+
+  const activeWorkload =
+    openTickets + inProgressTickets;
+
+  const highRiskTickets =
+    criticalPriority + highPriority;
+
+  // ===============================
+  // UI
+  // ===============================
 
   return (
     <div className="analytics-page">
@@ -171,7 +227,7 @@ function Analytics() {
 
       <div className="analytics-grid">
 
-        {/* TICKET STATUS */}
+        {/* STATUS */}
 
         <section className="analytics-card">
 
@@ -182,10 +238,12 @@ function Analytics() {
             </div>
           </div>
 
+
           <div className="analytics-list">
 
             <div className="analytics-row">
-              <div>
+
+              <div className="analytics-label">
                 <span>Open</span>
                 <strong>{openTickets}</strong>
               </div>
@@ -202,11 +260,13 @@ function Analytics() {
               <small>
                 {getPercentage(openTickets)}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
-              <div>
+
+              <div className="analytics-label">
                 <span>In Progress</span>
                 <strong>{inProgressTickets}</strong>
               </div>
@@ -215,7 +275,9 @@ function Analytics() {
                 <div
                   className="progress-fill orange-fill"
                   style={{
-                    width: `${getPercentage(inProgressTickets)}%`,
+                    width: `${getPercentage(
+                      inProgressTickets
+                    )}%`,
                   }}
                 />
               </div>
@@ -223,11 +285,13 @@ function Analytics() {
               <small>
                 {getPercentage(inProgressTickets)}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
-              <div>
+
+              <div className="analytics-label">
                 <span>Resolved</span>
                 <strong>{resolvedTickets}</strong>
               </div>
@@ -236,7 +300,9 @@ function Analytics() {
                 <div
                   className="progress-fill green-fill"
                   style={{
-                    width: `${getPercentage(resolvedTickets)}%`,
+                    width: `${getPercentage(
+                      resolvedTickets
+                    )}%`,
                   }}
                 />
               </div>
@@ -244,6 +310,7 @@ function Analytics() {
               <small>
                 {getPercentage(resolvedTickets)}%
               </small>
+
             </div>
 
           </div>
@@ -262,10 +329,12 @@ function Analytics() {
             </div>
           </div>
 
+
           <div className="analytics-list">
 
             <div className="analytics-row">
-              <div>
+
+              <div className="analytics-label">
                 <span>Critical</span>
                 <strong>{criticalPriority}</strong>
               </div>
@@ -284,11 +353,13 @@ function Analytics() {
               <small>
                 {getPercentage(criticalPriority)}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
-              <div>
+
+              <div className="analytics-label">
                 <span>High</span>
                 <strong>{highPriority}</strong>
               </div>
@@ -307,11 +378,13 @@ function Analytics() {
               <small>
                 {getPercentage(highPriority)}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
-              <div>
+
+              <div className="analytics-label">
                 <span>Medium</span>
                 <strong>{mediumPriority}</strong>
               </div>
@@ -330,11 +403,13 @@ function Analytics() {
               <small>
                 {getPercentage(mediumPriority)}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
-              <div>
+
+              <div className="analytics-label">
                 <span>Low</span>
                 <strong>{lowPriority}</strong>
               </div>
@@ -343,7 +418,9 @@ function Analytics() {
                 <div
                   className="progress-fill green-fill"
                   style={{
-                    width: `${getPercentage(lowPriority)}%`,
+                    width: `${getPercentage(
+                      lowPriority
+                    )}%`,
                   }}
                 />
               </div>
@@ -351,6 +428,7 @@ function Analytics() {
               <small>
                 {getPercentage(lowPriority)}%
               </small>
+
             </div>
 
           </div>
@@ -368,6 +446,7 @@ function Analytics() {
               <p>Customer issue distribution</p>
             </div>
           </div>
+
 
           <div className="category-grid">
 
@@ -407,18 +486,14 @@ function Analytics() {
             </div>
           </div>
 
+
           <div className="performance-box">
 
             <div>
               <span>Resolution Rate</span>
 
               <strong>
-                {totalTickets
-                  ? Math.round(
-                      (resolvedTickets / totalTickets) * 100
-                    )
-                  : 0}
-                %
+                {resolutionRate}%
               </strong>
             </div>
 
@@ -427,7 +502,7 @@ function Analytics() {
               <span>Active Workload</span>
 
               <strong>
-                {openTickets + inProgressTickets}
+                {activeWorkload}
               </strong>
             </div>
 
@@ -436,7 +511,7 @@ function Analytics() {
               <span>High Risk Tickets</span>
 
               <strong>
-                {criticalPriority + highPriority}
+                {highRiskTickets}
               </strong>
             </div>
 
