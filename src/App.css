@@ -1918,6 +1918,220 @@ button {
   font-size: 13px;
 }
 
+/* =========================
+   ANALYTICS
+========================= */
+
+.analytics-page {
+  padding: 32px 48px;
+  min-height: 100vh;
+}
+
+.analytics-page .analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.analytics-page .analytics-card {
+  background: #1c1c1f;
+  border: 1px solid #29292d;
+  border-radius: 20px;
+  padding: 28px;
+  min-width: 0;
+}
+
+.analytics-page .section-header {
+  margin-bottom: 24px;
+}
+
+.analytics-page .section-header h2 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.analytics-page .section-header p {
+  margin: 6px 0 0;
+  color: #8d8d95;
+  font-size: 14px;
+}
+
+
+/* =========================
+   ANALYTICS ROW
+========================= */
+
+.analytics-page .analytics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.analytics-page .analytics-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 45px;
+  align-items: center;
+  gap: 14px;
+}
+
+.analytics-page .analytics-row > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.analytics-page .analytics-row span {
+  color: #d0d0d5;
+}
+
+.analytics-page .analytics-row strong {
+  color: #ffffff;
+}
+
+.analytics-page .analytics-row small {
+  color: #9999a1;
+  text-align: right;
+}
+
+
+/* =========================
+   PROGRESS BAR
+========================= */
+
+.analytics-page .progress-track {
+  height: 8px;
+  background: #303035;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.analytics-page .progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.analytics-page .blue-fill {
+  background: #1683ff;
+}
+
+.analytics-page .orange-fill {
+  background: #f59e0b;
+}
+
+.analytics-page .green-fill {
+  background: #22c55e;
+}
+
+.analytics-page .red-fill {
+  background: #ef4444;
+}
+
+.analytics-page .critical-fill {
+  background: #dc2626;
+}
+
+
+/* =========================
+   CATEGORY GRID
+========================= */
+
+.analytics-page .category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.analytics-page .category-box {
+  background: #242428;
+  border: 1px solid #303035;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.analytics-page .category-box span {
+  color: #d5d5da;
+}
+
+.analytics-page .category-box strong {
+  font-size: 24px;
+  color: #ffffff;
+}
+
+
+/* =========================
+   PERFORMANCE
+========================= */
+
+.analytics-page .performance-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.analytics-page .performance-box > div {
+  background: #242428;
+  border: 1px solid #303035;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.analytics-page .performance-box span {
+  display: block;
+  color: #9999a1;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.analytics-page .performance-box strong {
+  font-size: 26px;
+  color: #ffffff;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+  .analytics-page {
+    padding: 24px;
+  }
+
+  .analytics-page .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-page .performance-box {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .analytics-page {
+    padding: 20px 16px;
+  }
+
+  .analytics-page .analytics-row {
+    grid-template-columns: 90px 1fr 40px;
+    gap: 8px;
+  }
+
+  .analytics-page .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
 
    
    
