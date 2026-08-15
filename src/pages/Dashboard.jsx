@@ -1,5 +1,5 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 const API_URL = "https://finpilotai-2s9v.onrender.com";
 
@@ -8,9 +8,161 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
 
+  // ================= DATABASE STATES =================
+
+  const [tickets, setTickets] = useState([]);
+  const [ticketsLoading, setTicketsLoading] = useState(true);
+  const [ticketsError, setTicketsError] = useState("");
+
+  // ================= FETCH TICKETS =================
+
+  useEffect(() => {
+    fetchDashboardTickets();
+  }, []);
+
+  const fetchDashboardTickets = async () => {
+    setTicketsLoading(true);
+    setTicketsError("");
+
+    const { data, error } = await supabase
+      .from("tickets")
+      .select(`
+        id,
+        created_at,
+        customer_id,
+        subject,
+        status,
+        priority,
+        category,
+        sentiment,
+        customers (
+          id,
+          name,
+          email
+        )
+      `)
+      .order("created_at", {
+        ascending: false,
+      });
+
+    if (error) {
+      console.error("Dashboard ticket error:", error);
+      setTicketsError("Unable to load tickets.");
+      setTickets([]);
+      setTicketsLoading(false);
+      return;
+    }
+
+    const formattedTickets = (data || []).map((ticket) => ({
+      id: ticket.id,
+      customer_id: ticket.customer_id,
+
+      customer:
+        ticket.customers?.name ||
+        "Unknown Customer",
+
+      email:
+        ticket.customers?.email ||
+        "",
+
+      subject:
+        ticket.subject ||
+        "No subject",
+
+      category:
+        formatText(ticket.category || "General"),
+
+      priority:
+        formatText(ticket.priority || "Medium"),
+
+      status:
+        formatStatus(ticket.status || "open"),
+
+      sentiment:
+        formatText(ticket.sentiment || ""),
+
+      created_at:
+        ticket.created_at,
+    }));
+
+    setTickets(formattedTickets);
+    setTicketsLoading(false);
+  };
+
+  // ================= FORMAT HELPERS =================
+
+  const formatText = (value) => {
+    if (!value) return "";
+
+    return value
+      .toString()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) =>
+        char.toUpperCase()
+      );
+  };
+
+  const formatStatus = (value) => {
+    if (!value) return "Open";
+
+    return value
+      .toString()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) =>
+        char.toUpperCase()
+      );
+  };
+
+  // ================= DASHBOARD STATS =================
+
+  const openTickets = tickets.filter(
+    (ticket) =>
+      ticket.status.toLowerCase() === "open"
+  ).length;
+
+  const highPriority = tickets.filter(
+    (ticket) => {
+      const priority =
+        ticket.priority.toLowerCase();
+
+      return (
+        priority === "high" ||
+        priority === "critical"
+      );
+    }
+  ).length;
+
+  const resolvedToday = tickets.filter(
+    (ticket) => {
+      const today =
+        new Date().toDateString();
+
+      const ticketDate =
+        new Date(
+          ticket.created_at
+        ).toDateString();
+
+      return (
+        ticket.status.toLowerCase() ===
+          "resolved" &&
+        ticketDate === today
+      );
+    }
+  ).length;
+
+  const negativeSentiment = tickets.filter(
+    (ticket) =>
+      ticket.sentiment.toLowerCase() ===
+      "negative"
+  ).length;
+
+  // ================= AI ANALYZER =================
+
   const analyzeTicket = async () => {
     if (!message.trim()) {
-      alert("Please enter a customer message.");
+      alert(
+        "Please enter a customer message."
+      );
       return;
     }
 
@@ -18,39 +170,53 @@ function Dashboard() {
     setResult(null);
 
     try {
-      const response = await fetch(`${API_URL}/support/analyze`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: message,
-        }),
-      });
+      const response = await fetch(
+        `${API_URL}/support/analyze`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            message: message,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error("Failed to analyze ticket.");
+        throw new Error(
+          "Failed to analyze ticket."
+        );
       }
 
       let analysis = data.analysis;
 
       if (typeof analysis === "string") {
-        analysis = JSON.parse(analysis);
+        analysis =
+          JSON.parse(analysis);
       }
 
       setResult(analysis);
     } catch (error) {
       console.error(error);
-      alert("Unable to analyze ticket. Please try again.");
+
+      alert(
+        "Unable to analyze ticket. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // ================= COPY AI REPLY =================
+
   const copyReply = async () => {
-    if (!result?.suggested_reply) return;
+    if (!result?.suggested_reply) {
+      return;
+    }
 
     await navigator.clipboard.writeText(
       result.suggested_reply
@@ -70,7 +236,8 @@ function Dashboard() {
           <h1>Dashboard</h1>
 
           <p>
-            AI-powered customer support management
+            AI-powered customer support
+            management
           </p>
         </div>
 
@@ -101,13 +268,21 @@ function Dashboard() {
           </div>
 
           <div>
-            <span>Open Tickets</span>
 
-            <h2>24</h2>
+            <span>
+              Open Tickets
+            </span>
+
+            <h2>
+              {ticketsLoading
+                ? "..."
+                : openTickets}
+            </h2>
 
             <small>
-              +8.2% this week
+              Currently open
             </small>
+
           </div>
 
         </div>
@@ -120,13 +295,21 @@ function Dashboard() {
           </div>
 
           <div>
-            <span>High Priority</span>
 
-            <h2>7</h2>
+            <span>
+              High Priority
+            </span>
+
+            <h2>
+              {ticketsLoading
+                ? "..."
+                : highPriority}
+            </h2>
 
             <small>
               Needs attention
             </small>
+
           </div>
 
         </div>
@@ -139,13 +322,21 @@ function Dashboard() {
           </div>
 
           <div>
-            <span>Resolved Today</span>
 
-            <h2>18</h2>
+            <span>
+              Resolved Today
+            </span>
+
+            <h2>
+              {ticketsLoading
+                ? "..."
+                : resolvedToday}
+            </h2>
 
             <small>
-              +12.4% today
+              Resolved today
             </small>
+
           </div>
 
         </div>
@@ -158,13 +349,21 @@ function Dashboard() {
           </div>
 
           <div>
-            <span>Negative Sentiment</span>
 
-            <h2>9</h2>
+            <span>
+              Negative Sentiment
+            </span>
+
+            <h2>
+              {ticketsLoading
+                ? "..."
+                : negativeSentiment}
+            </h2>
 
             <small>
               Needs follow-up
             </small>
+
           </div>
 
         </div>
@@ -213,8 +412,9 @@ function Dashboard() {
           <div className="analyzer-footer">
 
             <span>
-              AI will detect category, priority,
-              sentiment and suggest a reply.
+              AI will detect category,
+              priority, sentiment and
+              suggest a reply.
             </span>
 
             <button
@@ -266,7 +466,8 @@ function Dashboard() {
               </span>
 
               <strong>
-                {result.category || "Unknown"}
+                {result.category ||
+                  "Unknown"}
               </strong>
 
             </div>
@@ -279,7 +480,8 @@ function Dashboard() {
               </span>
 
               <strong>
-                {result.priority || "Unknown"}
+                {result.priority ||
+                  "Unknown"}
               </strong>
 
             </div>
@@ -292,7 +494,8 @@ function Dashboard() {
               </span>
 
               <strong>
-                {result.sentiment || "Unknown"}
+                {result.sentiment ||
+                  "Unknown"}
               </strong>
 
             </div>
@@ -366,212 +569,163 @@ function Dashboard() {
 
         <div className="table-card">
 
-          <table>
+          {ticketsError && (
 
-            <thead>
+            <div className="empty-state">
+              {ticketsError}
+            </div>
 
-              <tr>
+          )}
 
-                <th>
-                  Customer
-                </th>
 
-                <th>
-                  Subject
-                </th>
+          {!ticketsError &&
+            ticketsLoading && (
 
-                <th>
-                  Category
-                </th>
+              <div className="empty-state">
+                Loading tickets...
+              </div>
 
-                <th>
-                  Priority
-                </th>
+            )}
 
-                <th>
-                  Status
-                </th>
 
-              </tr>
+          {!ticketsError &&
+            !ticketsLoading &&
+            tickets.length === 0 && (
 
-            </thead>
+              <div className="empty-state">
+                No tickets found.
+              </div>
 
+            )}
 
-            <tbody>
 
-              <tr>
+          {!ticketsError &&
+            !ticketsLoading &&
+            tickets.length > 0 && (
 
-                <td>
+              <table>
 
-                  <div className="customer">
+                <thead>
 
-                    <div className="avatar small">
-                      JD
-                    </div>
+                  <tr>
 
-                    <div>
+                    <th>
+                      Customer
+                    </th>
 
-                      <strong>
-                        John Doe
-                      </strong>
+                    <th>
+                      Subject
+                    </th>
 
-                      <span>
-                        john@example.com
-                      </span>
+                    <th>
+                      Category
+                    </th>
 
-                    </div>
+                    <th>
+                      Priority
+                    </th>
 
-                  </div>
+                    <th>
+                      Status
+                    </th>
 
-                </td>
+                  </tr>
 
+                </thead>
 
-                <td>
-                  Duplicate subscription charge
-                </td>
 
+                <tbody>
 
-                <td>
-                  Billing
-                </td>
+                  {tickets
+                    .slice(0, 5)
+                    .map((ticket) => (
 
+                      <tr
+                        key={ticket.id}
+                      >
 
-                <td>
+                        <td>
 
-                  <span className="badge high">
-                    High
-                  </span>
+                          <div className="customer">
 
-                </td>
+                            <div className="avatar small">
 
+                              {ticket.customer
+                                .split(" ")
+                                .map(
+                                  (name) =>
+                                    name[0]
+                                )
+                                .join("")
+                                .slice(0, 2)}
 
-                <td>
+                            </div>
 
-                  <span className="badge open">
-                    Open
-                  </span>
+                            <div>
 
-                </td>
+                              <strong>
+                                {ticket.customer}
+                              </strong>
 
-              </tr>
+                              <span>
+                                {ticket.email}
+                              </span>
 
+                            </div>
 
-              <tr>
+                          </div>
 
-                <td>
+                        </td>
 
-                  <div className="customer">
 
-                    <div className="avatar small">
-                      AS
-                    </div>
+                        <td>
+                          {ticket.subject}
+                        </td>
 
-                    <div>
 
-                      <strong>
-                        Alex Smith
-                      </strong>
+                        <td>
+                          {ticket.category}
+                        </td>
 
-                      <span>
-                        alex@example.com
-                      </span>
 
-                    </div>
+                        <td>
 
-                  </div>
+                          <span
+                            className={`badge ${ticket.priority.toLowerCase()}`}
+                          >
+                            {ticket.priority}
+                          </span>
 
-                </td>
+                        </td>
 
 
-                <td>
-                  Unable to login
-                </td>
+                        <td>
 
+                          <span
+                            className={`badge ${
+                              ticket.status ===
+                              "In Progress"
+                                ? "progress"
+                                : ticket.status ===
+                                  "Resolved"
+                                ? "open"
+                                : "open"
+                            }`}
+                          >
+                            {ticket.status}
+                          </span>
 
-                <td>
-                  Account
-                </td>
+                        </td>
 
+                      </tr>
 
-                <td>
+                    ))}
 
-                  <span className="badge medium">
-                    Medium
-                  </span>
+                </tbody>
 
-                </td>
+              </table>
 
-
-                <td>
-
-                  <span className="badge progress">
-                    In Progress
-                  </span>
-
-                </td>
-
-              </tr>
-
-
-              <tr>
-
-                <td>
-
-                  <div className="customer">
-
-                    <div className="avatar small">
-                      MK
-                    </div>
-
-                    <div>
-
-                      <strong>
-                        Maria Khan
-                      </strong>
-
-                      <span>
-                        maria@example.com
-                      </span>
-
-                    </div>
-
-                  </div>
-
-                </td>
-
-
-                <td>
-                  Payment failed
-                </td>
-
-
-                <td>
-                  Billing
-                </td>
-
-
-                <td>
-
-                  <span className="badge critical">
-                    Critical
-                  </span>
-
-                </td>
-
-
-                <td>
-
-                  <span className="badge open">
-                    Open
-                  </span>
-
-                </td>
-
-              </tr>
-
-            </tbody>
-
-          </table>
+            )}
 
         </div>
 
