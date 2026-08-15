@@ -35,6 +35,9 @@ function Dashboard() {
         priority,
         category,
         sentiment,
+        ai_summary,
+        ai_suggested_reply,
+        assigned_to,
         customers (
           id,
           name,
@@ -46,44 +49,79 @@ function Dashboard() {
       });
 
     if (error) {
-      console.error("Dashboard ticket error:", error);
-      setTicketsError("Unable to load tickets.");
+      console.error(
+        "Dashboard ticket error:",
+        error
+      );
+
+      setTicketsError(
+        "Unable to load tickets."
+      );
+
       setTickets([]);
       setTicketsLoading(false);
+
       return;
     }
 
-    const formattedTickets = (data || []).map((ticket) => ({
-      id: ticket.id,
-      customer_id: ticket.customer_id,
+    const formattedTickets = (data || []).map(
+      (ticket) => ({
+        id: ticket.id,
 
-      customer:
-        ticket.customers?.name ||
-        "Unknown Customer",
+        customer_id:
+          ticket.customer_id,
 
-      email:
-        ticket.customers?.email ||
-        "",
+        customer:
+          ticket.customers?.name ||
+          "Unknown Customer",
 
-      subject:
-        ticket.subject ||
-        "No subject",
+        email:
+          ticket.customers?.email ||
+          "",
 
-      category:
-        formatText(ticket.category || "General"),
+        subject:
+          ticket.subject ||
+          "No subject",
 
-      priority:
-        formatText(ticket.priority || "Medium"),
+        category:
+          formatText(
+            ticket.category ||
+              "General"
+          ),
 
-      status:
-        formatStatus(ticket.status || "open"),
+        priority:
+          formatText(
+            ticket.priority ||
+              "Medium"
+          ),
 
-      sentiment:
-        formatText(ticket.sentiment || ""),
+        status:
+          formatStatus(
+            ticket.status ||
+              "open"
+          ),
 
-      created_at:
-        ticket.created_at,
-    }));
+        sentiment:
+          formatText(
+            ticket.sentiment ||
+              ""
+          ),
+
+        ai_summary:
+          ticket.ai_summary ||
+          "",
+
+        ai_suggested_reply:
+          ticket.ai_suggested_reply ||
+          "",
+
+        assigned_to:
+          ticket.assigned_to,
+
+        created_at:
+          ticket.created_at,
+      })
+    );
 
     setTickets(formattedTickets);
     setTicketsLoading(false);
@@ -115,13 +153,15 @@ function Dashboard() {
 
   // ================= DASHBOARD STATS =================
 
-  const openTickets = tickets.filter(
-    (ticket) =>
-      ticket.status.toLowerCase() === "open"
-  ).length;
+  const openTickets =
+    tickets.filter(
+      (ticket) =>
+        ticket.status.toLowerCase() ===
+        "open"
+    ).length;
 
-  const highPriority = tickets.filter(
-    (ticket) => {
+  const highPriority =
+    tickets.filter((ticket) => {
       const priority =
         ticket.priority.toLowerCase();
 
@@ -129,11 +169,10 @@ function Dashboard() {
         priority === "high" ||
         priority === "critical"
       );
-    }
-  ).length;
+    }).length;
 
-  const resolvedToday = tickets.filter(
-    (ticket) => {
+  const resolvedToday =
+    tickets.filter((ticket) => {
       const today =
         new Date().toDateString();
 
@@ -147,14 +186,14 @@ function Dashboard() {
           "resolved" &&
         ticketDate === today
       );
-    }
-  ).length;
+    }).length;
 
-  const negativeSentiment = tickets.filter(
-    (ticket) =>
-      ticket.sentiment.toLowerCase() ===
-      "negative"
-  ).length;
+  const negativeSentiment =
+    tickets.filter(
+      (ticket) =>
+        ticket.sentiment.toLowerCase() ===
+        "negative"
+    ).length;
 
   // ================= AI ANALYZER =================
 
@@ -174,17 +213,20 @@ function Dashboard() {
         `${API_URL}/support/analyze`,
         {
           method: "POST",
+
           headers: {
             "Content-Type":
               "application/json",
           },
+
           body: JSON.stringify({
             message: message,
           }),
         }
       );
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -192,9 +234,13 @@ function Dashboard() {
         );
       }
 
-      let analysis = data.analysis;
+      let analysis =
+        data.analysis;
 
-      if (typeof analysis === "string") {
+      if (
+        typeof analysis ===
+        "string"
+      ) {
         analysis =
           JSON.parse(analysis);
       }
@@ -211,10 +257,12 @@ function Dashboard() {
     }
   };
 
-  // ================= COPY AI REPLY =================
+  // ================= COPY REPLY =================
 
   const copyReply = async () => {
-    if (!result?.suggested_reply) {
+    if (
+      !result?.suggested_reply
+    ) {
       return;
     }
 
@@ -233,11 +281,13 @@ function Dashboard() {
       <header className="topbar">
 
         <div>
-          <h1>Dashboard</h1>
+          <h1>
+            Dashboard
+          </h1>
 
           <p>
-            AI-powered customer support
-            management
+            AI-powered customer
+            support management
           </p>
         </div>
 
@@ -384,8 +434,8 @@ function Dashboard() {
             </h2>
 
             <p>
-              Analyze customer messages with
-              SupportFlow AI
+              Analyze customer messages
+              with SupportFlow AI
             </p>
 
           </div>
@@ -407,7 +457,6 @@ function Dashboard() {
             }
             placeholder="Example: I was charged twice for my subscription and need help..."
           />
-
 
           <div className="analyzer-footer">
 
@@ -449,7 +498,8 @@ function Dashboard() {
               </h2>
 
               <p>
-                SupportFlow AI analysis result
+                SupportFlow AI analysis
+                result
               </p>
 
             </div>
@@ -559,7 +609,8 @@ function Dashboard() {
             </h2>
 
             <p>
-              Latest customer support activity
+              Latest customer support
+              activity
             </p>
 
           </div>
@@ -638,88 +689,90 @@ function Dashboard() {
 
                   {tickets
                     .slice(0, 5)
-                    .map((ticket) => (
+                    .map(
+                      (ticket) => (
 
-                      <tr
-                        key={ticket.id}
-                      >
+                        <tr
+                          key={ticket.id}
+                        >
 
-                        <td>
+                          <td>
 
-                          <div className="customer">
+                            <div className="customer">
 
-                            <div className="avatar small">
+                              <div className="avatar small">
 
-                              {ticket.customer
-                                .split(" ")
-                                .map(
-                                  (name) =>
-                                    name[0]
-                                )
-                                .join("")
-                                .slice(0, 2)}
+                                {ticket.customer
+                                  .split(" ")
+                                  .map(
+                                    (name) =>
+                                      name[0]
+                                  )
+                                  .join("")
+                                  .slice(
+                                    0,
+                                    2
+                                  )}
+
+                              </div>
+
+                              <div>
+
+                                <strong>
+                                  {ticket.customer}
+                                </strong>
+
+                                <span>
+                                  {ticket.email}
+                                </span>
+
+                              </div>
 
                             </div>
 
-                            <div>
-
-                              <strong>
-                                {ticket.customer}
-                              </strong>
-
-                              <span>
-                                {ticket.email}
-                              </span>
-
-                            </div>
-
-                          </div>
-
-                        </td>
+                          </td>
 
 
-                        <td>
-                          {ticket.subject}
-                        </td>
+                          <td>
+                            {ticket.subject}
+                          </td>
 
 
-                        <td>
-                          {ticket.category}
-                        </td>
+                          <td>
+                            {ticket.category}
+                          </td>
 
 
-                        <td>
+                          <td>
 
-                          <span
-                            className={`badge ${ticket.priority.toLowerCase()}`}
-                          >
-                            {ticket.priority}
-                          </span>
+                            <span
+                              className={`badge ${ticket.priority.toLowerCase()}`}
+                            >
+                              {ticket.priority}
+                            </span>
 
-                        </td>
+                          </td>
 
 
-                        <td>
+                          <td>
 
-                          <span
-                            className={`badge ${
-                              ticket.status ===
-                              "In Progress"
-                                ? "progress"
-                                : ticket.status ===
-                                  "Resolved"
-                                ? "open"
-                                : "open"
-                            }`}
-                          >
-                            {ticket.status}
-                          </span>
+                            <span
+                              className={`badge ${
+                                ticket.status ===
+                                "In Progress"
+                                  ? "progress"
+                                  : "open"
+                              }`}
+                            >
+                              {ticket.status}
+                            </span>
 
-                        </td>
+                          </td>
 
-                      </tr>
+                        </tr>
 
-                    ))}
+                      )
+                    )}
 
                 </tbody>
 
