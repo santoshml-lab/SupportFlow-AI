@@ -212,6 +212,24 @@ function Tickets({ onViewCustomer }) {
     setShowNewTicket(false);
   };
 
+  const updateTicketStatus = async (ticketId, newStatus) => {
+  const { error } = await supabase
+    .from("tickets")
+    .update({
+      status: newStatus,
+    })
+    .eq("id", ticketId);
+
+  if (error) {
+    console.error("Status update error:", error);
+    setError(`Could not update status: ${error.message}`);
+    return;
+  }
+
+  // Refresh tickets
+  await fetchTickets();
+};
+
   /* =========================================================
      SAVE NEW TICKET TO SUPABASE
      ========================================================= */
@@ -528,18 +546,43 @@ function Tickets({ onViewCustomer }) {
                 </td>
 
                 <td>
+  <select
+    value={ticket.status.toLowerCase().replace(" ", "_")}
+    onChange={(e) => {
+      e.stopPropagation();
 
-                  <span
-                    className={`badge ${
-                      ticket.status === "In Progress"
-                        ? "progress"
-                        : "open"
-                    }`}
-                  >
-                    {ticket.status}
-                  </span>
+      updateTicketStatus(
+        ticket.id,
+        e.target.value
+      );
+    }}
+    onClick={(e) => e.stopPropagation()}
+  >
+    <option value="open">
+      Open
+    </option>
 
-                </td>
+    <option value="in_progress">
+      In Progress
+    </option>
+
+    <option value="resolved">
+      Resolved
+    </option>
+  </select>
+</td>
+
+                  
+                    
+                      
+                        
+                      
+                    
+                  
+                    
+                  
+
+                
 
               </tr>
 
