@@ -1,60 +1,189 @@
 import { useState } from "react";
 
-
+const API_BASE = "https://finpilotai-2s9v.onrender.com";
 
 function TicketDetails({ ticket, onBack, onViewCustomer }) {
   const [loading, setLoading] = useState(false);
-const [aiResult, setAiResult] = useState(null);
+  const [replyLoading, setReplyLoading] = useState(false);
+
+  const [aiResult, setAiResult] = useState(null);
+  const [aiReply, setAiReply] = useState("");
+
+  // =========================
+  // AI TICKET ANALYSIS
+  // =========================
 
   const analyzeTicket = async () => {
-  setLoading(true);
-  setAiResult(null);
+    setLoading(true);
+    setAiResult(null);
 
-  try {
-    const response = await fetch(
-      "https://finpilotai-2s9v.onrender.com/support/analyze",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: `${ticket.subject}. Customer: ${ticket.customer}`,
-        }),
+    try {
+      const response = await fetch(
+        `${API_BASE}/support/analyze`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: `${ticket.subject}. Customer: ${ticket.customer}`,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.detail || "AI analysis failed"
+        );
       }
-    );
 
-    const data = await response.json();
+      let analysis = data.analysis;
 
-    if (!response.ok) {
-      throw new Error("AI analysis failed");
+      if (typeof analysis === "string") {
+        try {
+          analysis = JSON.parse(analysis);
+        } catch {
+          throw new Error(
+            "AI returned an invalid analysis format."
+          );
+        }
+      }
+
+      setAiResult(analysis);
+
+      // If analysis already contains a suggested reply,
+      // show it in the auto-reply box as well.
+      if (analysis.suggested_reply) {
+        setAiReply(analysis.suggested_reply);
+      }
+
+    } catch (error) {
+      console.error("AI analysis error:", error);
+
+      alert(
+        error.message ||
+        "Unable to analyze ticket."
+      );
+    } finally {
+      setLoading(false);
     }
+  };
 
-    let analysis = data.analysis;
 
-    if (typeof analysis === "string") {
-      analysis = JSON.parse(analysis);
+  // =========================
+  // AI AUTO REPLY
+  // =========================
+
+  const generateAutoReply = async () => {
+    setReplyLoading(true);
+    setAiReply("");
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/support/auto-reply`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customer_name:
+              ticket.customer || "Customer",
+
+            ticket_message:
+              ticket.subject || "Customer support request",
+
+            category:
+              ticket.category || "General",
+
+            priority:
+              ticket.priority || "Medium",
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.detail || "Auto reply generation failed"
+        );
+      }
+
+      if (!data.success) {
+        throw new Error(
+          "AI could not generate a reply."
+        );
+      }
+
+      setAiReply(data.reply || "");
+
+    } catch (error) {
+      console.error(
+        "AI auto reply error:",
+        error
+      );
+
+      alert(
+        error.message ||
+        "Unable to generate AI reply."
+      );
+    } finally {
+      setReplyLoading(false);
     }
+  };
 
-    setAiResult(analysis);
-  } catch (error) {
-    console.error(error);
-    alert("Unable to analyze ticket.");
-  } finally {
-    setLoading(false);
-  }
-};
+
+  // =========================
+  // COPY REPLY
+  // =========================
+
+  const copyReply = async () => {
+    if (!aiReply) return;
+
+    try {
+      await navigator.clipboard.writeText(
+        aiReply
+      );
+
+      alert("AI reply copied!");
+
+    } catch (error) {
+      console.error(
+        "Copy reply error:",
+        error
+      );
+
+      alert("Unable to copy reply.");
+    }
+  };
+
+
+  // =========================
+  // TICKET NOT FOUND
+  // =========================
+
   if (!ticket) {
     return (
       <div className="page-placeholder">
-        <h1>Ticket not found</h1>
 
-        <button className="new-ticket" onClick={onBack}>
+        <h1>
+          Ticket not found
+        </h1>
+
+        <button
+          className="new-ticket"
+          onClick={onBack}
+        >
           ← Back to Tickets
         </button>
+
       </div>
     );
   }
+
 
   return (
     <div className="ticket-details-page">
@@ -72,13 +201,17 @@ const [aiResult, setAiResult] = useState(null);
             ← Back to Tickets
           </button>
 
-          <h1>Ticket Details</h1>
+          <h1>
+            Ticket Details
+          </h1>
 
           <p>
-            View ticket information and customer support activity
+            View ticket information and
+            customer support activity
           </p>
 
         </div>
+
 
         <span
           className={`badge ${
@@ -119,21 +252,32 @@ const [aiResult, setAiResult] = useState(null);
         <div className="ticket-meta">
 
           <div>
-            <span>Category</span>
-            <strong>{ticket.category}</strong>
-          </div>
-
-          <div>
-            <span>Priority</span>
+            <span>
+              Category
+            </span>
 
             <strong>
+              {ticket.category}
+            </strong>
+          </div>
+
+
+          <div>
+
+            <span>
+              Priority
+            </span>
+
+            <strong>
+
               <span
                 className={`badge ${
-                  ticket.priority.toLowerCase()
+                  ticket.priority?.toLowerCase()
                 }`}
               >
                 {ticket.priority}
               </span>
+
             </strong>
 
           </div>
@@ -150,13 +294,25 @@ const [aiResult, setAiResult] = useState(null);
         <div className="section-header">
 
           <div>
-            <h2>Customer</h2>
-            <p>Customer associated with this ticket</p>
+
+            <h2>
+              Customer
+            </h2>
+
+            <p>
+              Customer associated with this ticket
+            </p>
+
           </div>
+
 
           <button
             className="view-all"
-            onClick={() => onViewCustomer(ticket.customerId)}
+            onClick={() =>
+              onViewCustomer(
+                ticket.customerId
+              )
+            }
           >
             View Customer →
           </button>
@@ -167,11 +323,16 @@ const [aiResult, setAiResult] = useState(null);
         <div className="customer">
 
           <div className="avatar">
+
             {ticket.customer
-              .split(" ")
-              .map((name) => name[0])
+              ?.split(" ")
+              .map(
+                (name) => name[0]
+              )
               .join("")}
+
           </div>
+
 
           <div>
 
@@ -208,26 +369,50 @@ const [aiResult, setAiResult] = useState(null);
             {ticket.subject}
           </strong>
 
+
           <div className="ticket-info-list">
 
             <div>
-              <span>Ticket ID</span>
-              <strong>{ticket.id}</strong>
+              <span>
+                Ticket ID
+              </span>
+
+              <strong>
+                {ticket.id}
+              </strong>
             </div>
 
-            <div>
-              <span>Category</span>
-              <strong>{ticket.category}</strong>
-            </div>
 
             <div>
-              <span>Priority</span>
-              <strong>{ticket.priority}</strong>
+              <span>
+                Category
+              </span>
+
+              <strong>
+                {ticket.category}
+              </strong>
             </div>
 
+
             <div>
-              <span>Status</span>
-              <strong>{ticket.status}</strong>
+              <span>
+                Priority
+              </span>
+
+              <strong>
+                {ticket.priority}
+              </strong>
+            </div>
+
+
+            <div>
+              <span>
+                Status
+              </span>
+
+              <strong>
+                {ticket.status}
+              </strong>
             </div>
 
           </div>
@@ -244,106 +429,202 @@ const [aiResult, setAiResult] = useState(null);
           </h3>
 
           <p>
-            AI-powered ticket analysis and response assistance.
+            AI-powered ticket analysis
+            and response assistance.
           </p>
 
+
           <div className="ai-status">
-            ✨ AI Analysis Ready
+            ✨ AI Assistant Ready
           </div>
 
+
+          {/* ANALYZE BUTTON */}
+
           <button
-  className="new-ticket"
-  onClick={analyzeTicket}
-  disabled={loading}
->
-  {loading
-    ? "Analyzing..."
-    : "✨ Analyze Ticket with AI"}
-</button>
+            className="new-ticket"
+            onClick={analyzeTicket}
+            disabled={loading}
+          >
+            {loading
+              ? "Analyzing..."
+              : "✨ Analyze Ticket with AI"}
+          </button>
+
+
+          {/* ================= AI ANALYSIS ================= */}
+
           {aiResult && (
-  <div className="ai-result">
 
-    <div className="ai-result-header">
-      <div>
-        <h3>✨ AI Analysis</h3>
-        <p>SupportFlow AI recommendation</p>
-      </div>
+            <div className="ai-result">
 
-      <span className="ai-ready-badge">
-        ● Ready
-      </span>
-    </div>
+              <div className="ai-result-header">
 
-    <div className="ai-result-grid">
+                <div>
 
-      <div className="ai-result-item">
-        <span>Category</span>
-        <strong>
-          {aiResult.category || "Unknown"}
-        </strong>
-      </div>
+                  <h3>
+                    ✨ AI Analysis
+                  </h3>
 
-      <div className="ai-result-item">
-        <span>Priority</span>
-        <strong>
-          {aiResult.priority || "Unknown"}
-        </strong>
-      </div>
+                  <p>
+                    SupportFlow AI recommendation
+                  </p>
 
-      <div className="ai-result-item">
-        <span>Sentiment</span>
-        <strong>
-          {aiResult.sentiment || "Unknown"}
-        </strong>
-      </div>
+                </div>
 
-    </div>
 
-    <div className="ai-summary">
+                <span className="ai-ready-badge">
+                  ● Ready
+                </span>
 
-      <h4>📝 Summary</h4>
+              </div>
 
-      <p>
-        {aiResult.summary ||
-          "No summary available."}
-      </p>
 
-    </div>
+              <div className="ai-result-grid">
 
-    <div className="ai-reply">
+                <div className="ai-result-item">
 
-      <div>
-        <h4>💬 Suggested Reply</h4>
+                  <span>
+                    Category
+                  </span>
 
-        <p>
-          {aiResult.suggested_reply ||
-            "No reply generated."}
-        </p>
-      </div>
+                  <strong>
+                    {aiResult.category ||
+                      "Unknown"}
+                  </strong>
 
-      <button
-        className="copy-btn"
-        onClick={() => {
-          navigator.clipboard.writeText(
-            aiResult.suggested_reply || ""
-          );
+                </div>
 
-          alert("AI reply copied!");
-        }}
-      >
-        📋 Copy Reply
-      </button>
 
-    </div>
+                <div className="ai-result-item">
 
-  </div>
-)}
-  
+                  <span>
+                    Priority
+                  </span>
 
-    
-    
-            
-          
+                  <strong>
+                    {aiResult.priority ||
+                      "Unknown"}
+                  </strong>
+
+                </div>
+
+
+                <div className="ai-result-item">
+
+                  <span>
+                    Sentiment
+                  </span>
+
+                  <strong>
+                    {aiResult.sentiment ||
+                      "Unknown"}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              {/* SUMMARY */}
+
+              <div className="ai-summary">
+
+                <h4>
+                  📝 Summary
+                </h4>
+
+                <p>
+                  {aiResult.summary ||
+                    "No summary available."}
+                </p>
+
+              </div>
+
+            </div>
+
+          )}
+
+
+          {/* ================= AUTO REPLY ================= */}
+
+          <div className="ai-auto-reply">
+
+            <div className="ai-result-header">
+
+              <div>
+
+                <h3>
+                  💬 AI Auto Reply
+                </h3>
+
+                <p>
+                  Generate a professional
+                  response for this customer.
+                </p>
+
+              </div>
+
+              <span className="ai-ready-badge">
+                ✨ AI
+              </span>
+
+            </div>
+
+
+            <button
+              className="new-ticket"
+              onClick={generateAutoReply}
+              disabled={replyLoading}
+            >
+              {replyLoading
+                ? "Generating Reply..."
+                : "🤖 Generate Auto Reply"}
+            </button>
+
+
+            {aiReply && (
+
+              <div className="ai-reply">
+
+                <div>
+
+                  <h4>
+                    ✨ Suggested Reply
+                  </h4>
+
+                  <textarea
+                    value={aiReply}
+                    onChange={(event) =>
+                      setAiReply(
+                        event.target.value
+                      )
+                    }
+                    rows={8}
+                    placeholder="AI generated reply will appear here..."
+                  />
+
+                </div>
+
+
+                <div
+                  className="ai-reply-actions"
+                >
+
+                  <button
+                    className="copy-btn"
+                    onClick={copyReply}
+                  >
+                    📋 Copy Reply
+                  </button>
+
+                </div>
+
+              </div>
+
+            )}
+
+          </div>
 
         </div>
 
