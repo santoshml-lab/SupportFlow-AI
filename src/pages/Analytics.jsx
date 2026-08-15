@@ -1,13 +1,22 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 function Analytics() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // ===============================
-  // FETCH REAL TICKETS FROM SUPABASE
-  // ===============================
 
   const fetchTickets = async () => {
     setLoading(true);
@@ -32,20 +41,6 @@ function Analytics() {
     fetchTickets();
   }, []);
 
-  // ===============================
-  // NORMALIZE VALUES
-  // ===============================
-
-  const normalize = (value) =>
-    String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[_-]+/g, " ");
-
-  // ===============================
-  // LOADING
-  // ===============================
-
   if (loading) {
     return (
       <div className="analytics-page">
@@ -59,71 +54,51 @@ function Analytics() {
     );
   }
 
-  // ===============================
-  // TICKET STATUS
-  // ===============================
-
   const totalTickets = tickets.length;
 
   const openTickets = tickets.filter(
-    (ticket) => normalize(ticket.status) === "open"
+    (ticket) => ticket.status === "Open"
   ).length;
 
   const inProgressTickets = tickets.filter(
-    (ticket) =>
-      normalize(ticket.status) === "in progress" ||
-      normalize(ticket.status) === "inprogress"
+    (ticket) => ticket.status === "In Progress"
   ).length;
 
   const resolvedTickets = tickets.filter(
-    (ticket) =>
-      normalize(ticket.status) === "resolved" ||
-      normalize(ticket.status) === "closed"
+    (ticket) => ticket.status === "Resolved"
   ).length;
 
-  // ===============================
-  // PRIORITY
-  // ===============================
-
   const criticalPriority = tickets.filter(
-    (ticket) => normalize(ticket.priority) === "critical"
+    (ticket) => ticket.priority === "Critical"
   ).length;
 
   const highPriority = tickets.filter(
-    (ticket) => normalize(ticket.priority) === "high"
+    (ticket) => ticket.priority === "High"
   ).length;
 
   const mediumPriority = tickets.filter(
-    (ticket) => normalize(ticket.priority) === "medium"
+    (ticket) => ticket.priority === "Medium"
   ).length;
 
   const lowPriority = tickets.filter(
-    (ticket) => normalize(ticket.priority) === "low"
+    (ticket) => ticket.priority === "Low"
   ).length;
 
-  // ===============================
-  // CATEGORIES
-  // ===============================
-
   const billingTickets = tickets.filter(
-    (ticket) => normalize(ticket.category) === "billing"
+    (ticket) => ticket.category === "Billing"
   ).length;
 
   const accountTickets = tickets.filter(
-    (ticket) => normalize(ticket.category) === "account"
+    (ticket) => ticket.category === "Account"
   ).length;
 
   const technicalTickets = tickets.filter(
-    (ticket) => normalize(ticket.category) === "technical"
+    (ticket) => ticket.category === "Technical"
   ).length;
 
   const generalTickets = tickets.filter(
-    (ticket) => normalize(ticket.category) === "general"
+    (ticket) => ticket.category === "General"
   ).length;
-
-  // ===============================
-  // PERCENTAGE
-  // ===============================
 
   const getPercentage = (value) => {
     if (!totalTickets) return 0;
@@ -132,27 +107,73 @@ function Analytics() {
   };
 
   // ===============================
-  // PERFORMANCE
+  // CHART DATA
   // ===============================
 
-  const resolutionRate = totalTickets
-    ? Math.round((resolvedTickets / totalTickets) * 100)
-    : 0;
+  const statusData = [
+    {
+      name: "Open",
+      tickets: openTickets,
+    },
+    {
+      name: "In Progress",
+      tickets: inProgressTickets,
+    },
+    {
+      name: "Resolved",
+      tickets: resolvedTickets,
+    },
+  ];
 
-  const activeWorkload =
-    openTickets + inProgressTickets;
+  const priorityData = [
+    {
+      name: "Critical",
+      tickets: criticalPriority,
+    },
+    {
+      name: "High",
+      tickets: highPriority,
+    },
+    {
+      name: "Medium",
+      tickets: mediumPriority,
+    },
+    {
+      name: "Low",
+      tickets: lowPriority,
+    },
+  ];
 
-  const highRiskTickets =
-    criticalPriority + highPriority;
+  const categoryData = [
+    {
+      name: "Billing",
+      value: billingTickets,
+    },
+    {
+      name: "Account",
+      value: accountTickets,
+    },
+    {
+      name: "Technical",
+      value: technicalTickets,
+    },
+    {
+      name: "General",
+      value: generalTickets,
+    },
+  ].filter((item) => item.value > 0);
 
-  // ===============================
-  // UI
-  // ===============================
+  const PIE_COLORS = [
+    "#3b82f6",
+    "#22c55e",
+    "#f59e0b",
+    "#ef4444",
+  ];
 
   return (
     <div className="analytics-page">
 
-      {/* HEADER */}
+      {/* ================= HEADER ================= */}
 
       <div className="page-header">
         <div>
@@ -165,310 +186,306 @@ function Analytics() {
       </div>
 
 
-      {/* OVERVIEW */}
+      {/* ================= OVERVIEW ================= */}
 
       <section className="stats">
 
         <div className="stat-card">
+
           <div className="stat-icon blue">
             🎫
           </div>
 
           <div>
             <span>Total Tickets</span>
-            <h2>{totalTickets}</h2>
-            <small>All support requests</small>
+
+            <h2>
+              {totalTickets}
+            </h2>
+
+            <small>
+              All support requests
+            </small>
           </div>
+
         </div>
 
 
         <div className="stat-card">
+
           <div className="stat-icon red">
             🚨
           </div>
 
           <div>
             <span>Open Tickets</span>
-            <h2>{openTickets}</h2>
-            <small>Needs attention</small>
+
+            <h2>
+              {openTickets}
+            </h2>
+
+            <small>
+              Needs attention
+            </small>
           </div>
+
         </div>
 
 
         <div className="stat-card">
+
           <div className="stat-icon orange">
             ⏳
           </div>
 
           <div>
             <span>In Progress</span>
-            <h2>{inProgressTickets}</h2>
-            <small>Currently being handled</small>
+
+            <h2>
+              {inProgressTickets}
+            </h2>
+
+            <small>
+              Currently being handled
+            </small>
           </div>
+
         </div>
 
 
         <div className="stat-card">
+
           <div className="stat-icon green">
             ✓
           </div>
 
           <div>
             <span>Resolved</span>
-            <h2>{resolvedTickets}</h2>
-            <small>Successfully resolved</small>
+
+            <h2>
+              {resolvedTickets}
+            </h2>
+
+            <small>
+              Successfully resolved
+            </small>
           </div>
+
         </div>
 
       </section>
 
 
-      {/* ANALYTICS GRID */}
+      {/* ================= CHARTS ================= */}
 
       <div className="analytics-grid">
 
-        {/* STATUS */}
+        {/* STATUS CHART */}
 
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Ticket Status</h2>
-              <p>Current support workload</p>
+              <h2>
+                📊 Ticket Status
+              </h2>
+
+              <p>
+                Current support workload
+              </p>
             </div>
+
           </div>
 
 
-          <div className="analytics-list">
+          <div
+            className="analytics-chart"
+            style={{ width: "100%", height: 300 }}
+          >
 
-            <div className="analytics-row">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+            >
 
-              <div className="analytics-label">
-                <span>Open</span>
-                <strong>{openTickets}</strong>
-              </div>
+              <BarChart data={statusData}>
 
-              <div className="progress-track">
-                <div
-                  className="progress-fill blue-fill"
-                  style={{
-                    width: `${getPercentage(openTickets)}%`,
-                  }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#333"
                 />
-              </div>
 
-              <small>
-                {getPercentage(openTickets)}%
-              </small>
-
-            </div>
-
-
-            <div className="analytics-row">
-
-              <div className="analytics-label">
-                <span>In Progress</span>
-                <strong>{inProgressTickets}</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill orange-fill"
-                  style={{
-                    width: `${getPercentage(
-                      inProgressTickets
-                    )}%`,
-                  }}
+                <XAxis
+                  dataKey="name"
+                  stroke="#aaa"
                 />
-              </div>
 
-              <small>
-                {getPercentage(inProgressTickets)}%
-              </small>
-
-            </div>
-
-
-            <div className="analytics-row">
-
-              <div className="analytics-label">
-                <span>Resolved</span>
-                <strong>{resolvedTickets}</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill green-fill"
-                  style={{
-                    width: `${getPercentage(
-                      resolvedTickets
-                    )}%`,
-                  }}
+                <YAxis
+                  allowDecimals={false}
+                  stroke="#aaa"
                 />
-              </div>
 
-              <small>
-                {getPercentage(resolvedTickets)}%
-              </small>
+                <Tooltip />
 
-            </div>
+                <Legend />
+
+                <Bar
+                  dataKey="tickets"
+                  name="Tickets"
+                  fill="#3b82f6"
+                  radius={[8, 8, 0, 0]}
+                />
+
+              </BarChart>
+
+            </ResponsiveContainer>
 
           </div>
 
         </section>
 
 
-        {/* PRIORITY */}
+        {/* PRIORITY CHART */}
 
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Priority Breakdown</h2>
-              <p>Ticket urgency distribution</p>
+              <h2>
+                🎯 Priority Breakdown
+              </h2>
+
+              <p>
+                Ticket urgency distribution
+              </p>
             </div>
+
           </div>
 
 
-          <div className="analytics-list">
+          <div
+            className="analytics-chart"
+            style={{ width: "100%", height: 300 }}
+          >
 
-            <div className="analytics-row">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+            >
 
-              <div className="analytics-label">
-                <span>Critical</span>
-                <strong>{criticalPriority}</strong>
-              </div>
+              <BarChart data={priorityData}>
 
-              <div className="progress-track">
-                <div
-                  className="progress-fill critical-fill"
-                  style={{
-                    width: `${getPercentage(
-                      criticalPriority
-                    )}%`,
-                  }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#333"
                 />
-              </div>
 
-              <small>
-                {getPercentage(criticalPriority)}%
-              </small>
-
-            </div>
-
-
-            <div className="analytics-row">
-
-              <div className="analytics-label">
-                <span>High</span>
-                <strong>{highPriority}</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill red-fill"
-                  style={{
-                    width: `${getPercentage(
-                      highPriority
-                    )}%`,
-                  }}
+                <XAxis
+                  dataKey="name"
+                  stroke="#aaa"
                 />
-              </div>
 
-              <small>
-                {getPercentage(highPriority)}%
-              </small>
-
-            </div>
-
-
-            <div className="analytics-row">
-
-              <div className="analytics-label">
-                <span>Medium</span>
-                <strong>{mediumPriority}</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill orange-fill"
-                  style={{
-                    width: `${getPercentage(
-                      mediumPriority
-                    )}%`,
-                  }}
+                <YAxis
+                  allowDecimals={false}
+                  stroke="#aaa"
                 />
-              </div>
 
-              <small>
-                {getPercentage(mediumPriority)}%
-              </small>
+                <Tooltip />
 
-            </div>
+                <Legend />
 
-
-            <div className="analytics-row">
-
-              <div className="analytics-label">
-                <span>Low</span>
-                <strong>{lowPriority}</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill green-fill"
-                  style={{
-                    width: `${getPercentage(
-                      lowPriority
-                    )}%`,
-                  }}
+                <Bar
+                  dataKey="tickets"
+                  name="Tickets"
+                  fill="#f59e0b"
+                  radius={[8, 8, 0, 0]}
                 />
-              </div>
 
-              <small>
-                {getPercentage(lowPriority)}%
-              </small>
+              </BarChart>
 
-            </div>
+            </ResponsiveContainer>
 
           </div>
 
         </section>
 
 
-        {/* CATEGORIES */}
+        {/* CATEGORY CHART */}
 
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Ticket Categories</h2>
-              <p>Customer issue distribution</p>
+              <h2>
+                📁 Ticket Categories
+              </h2>
+
+              <p>
+                Customer issue distribution
+              </p>
             </div>
+
           </div>
 
 
-          <div className="category-grid">
+          <div
+            className="analytics-chart"
+            style={{ width: "100%", height: 300 }}
+          >
 
-            <div className="category-box">
-              <span>💳 Billing</span>
-              <strong>{billingTickets}</strong>
-            </div>
+            {categoryData.length === 0 ? (
 
-            <div className="category-box">
-              <span>👤 Account</span>
-              <strong>{accountTickets}</strong>
-            </div>
+              <div className="empty-state">
+                No category data available.
+              </div>
 
-            <div className="category-box">
-              <span>🛠️ Technical</span>
-              <strong>{technicalTickets}</strong>
-            </div>
+            ) : (
 
-            <div className="category-box">
-              <span>💬 General</span>
-              <strong>{generalTickets}</strong>
-            </div>
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
+
+                <PieChart>
+
+                  <Pie
+                    data={categoryData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    label
+                  >
+
+                    {categoryData.map(
+                      (entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            PIE_COLORS[
+                              index %
+                              PIE_COLORS.length
+                            ]
+                          }
+                        />
+                      )
+                    )}
+
+                  </Pie>
+
+                  <Tooltip />
+
+                  <Legend />
+
+                </PieChart>
+
+              </ResponsiveContainer>
+
+            )}
 
           </div>
 
@@ -480,39 +497,171 @@ function Analytics() {
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Support Performance</h2>
-              <p>Overall ticket resolution metrics</p>
+              <h2>
+                ⚡ Support Performance
+              </h2>
+
+              <p>
+                Overall ticket resolution metrics
+              </p>
             </div>
+
           </div>
 
 
           <div className="performance-box">
 
             <div>
-              <span>Resolution Rate</span>
+
+              <span>
+                Resolution Rate
+              </span>
 
               <strong>
-                {resolutionRate}%
+                {totalTickets
+                  ? Math.round(
+                      (resolvedTickets /
+                        totalTickets) *
+                        100
+                    )
+                  : 0}
+                %
               </strong>
+
             </div>
 
 
             <div>
-              <span>Active Workload</span>
+
+              <span>
+                Active Workload
+              </span>
 
               <strong>
-                {activeWorkload}
+                {openTickets +
+                  inProgressTickets}
               </strong>
+
             </div>
 
 
             <div>
-              <span>High Risk Tickets</span>
+
+              <span>
+                High Risk Tickets
+              </span>
 
               <strong>
-                {highRiskTickets}
+                {criticalPriority +
+                  highPriority}
               </strong>
+
+            </div>
+
+          </div>
+
+
+          {/* STATUS SUMMARY */}
+
+          <div className="analytics-list">
+
+            <div className="analytics-row">
+
+              <div>
+                <span>Open</span>
+                <strong>
+                  {openTickets}
+                </strong>
+              </div>
+
+              <div className="progress-track">
+
+                <div
+                  className="progress-fill blue-fill"
+                  style={{
+                    width: `${getPercentage(
+                      openTickets
+                    )}%`,
+                  }}
+                />
+
+              </div>
+
+              <small>
+                {getPercentage(
+                  openTickets
+                )}
+                %
+              </small>
+
+            </div>
+
+
+            <div className="analytics-row">
+
+              <div>
+                <span>In Progress</span>
+
+                <strong>
+                  {inProgressTickets}
+                </strong>
+              </div>
+
+              <div className="progress-track">
+
+                <div
+                  className="progress-fill orange-fill"
+                  style={{
+                    width: `${getPercentage(
+                      inProgressTickets
+                    )}%`,
+                  }}
+                />
+
+              </div>
+
+              <small>
+                {getPercentage(
+                  inProgressTickets
+                )}
+                %
+              </small>
+
+            </div>
+
+
+            <div className="analytics-row">
+
+              <div>
+                <span>Resolved</span>
+
+                <strong>
+                  {resolvedTickets}
+                </strong>
+              </div>
+
+              <div className="progress-track">
+
+                <div
+                  className="progress-fill green-fill"
+                  style={{
+                    width: `${getPercentage(
+                      resolvedTickets
+                    )}%`,
+                  }}
+                />
+
+              </div>
+
+              <small>
+                {getPercentage(
+                  resolvedTickets
+                )}
+                %
+              </small>
+
             </div>
 
           </div>
