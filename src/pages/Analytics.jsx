@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+
 import {
   BarChart,
   Bar,
@@ -18,6 +19,10 @@ function Analytics() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ===============================
+  // FETCH REAL TICKETS FROM SUPABASE
+  // ===============================
+
   const fetchTickets = async () => {
     setLoading(true);
 
@@ -28,7 +33,11 @@ function Analytics() {
 
     if (error) {
       console.error("Analytics tickets error:", error);
-      alert(`Could not load analytics: ${error.message}`);
+
+      alert(
+        `Could not load analytics: ${error.message}`
+      );
+
       setLoading(false);
       return;
     }
@@ -40,6 +49,10 @@ function Analytics() {
   useEffect(() => {
     fetchTickets();
   }, []);
+
+  // ===============================
+  // LOADING
+  // ===============================
 
   if (loading) {
     return (
@@ -54,6 +67,10 @@ function Analytics() {
     );
   }
 
+  // ===============================
+  // TICKET STATUS
+  // ===============================
+
   const totalTickets = tickets.length;
 
   const openTickets = tickets.filter(
@@ -67,6 +84,10 @@ function Analytics() {
   const resolvedTickets = tickets.filter(
     (ticket) => ticket.status === "Resolved"
   ).length;
+
+  // ===============================
+  // PRIORITY
+  // ===============================
 
   const criticalPriority = tickets.filter(
     (ticket) => ticket.priority === "Critical"
@@ -84,6 +105,10 @@ function Analytics() {
     (ticket) => ticket.priority === "Low"
   ).length;
 
+  // ===============================
+  // CATEGORIES
+  // ===============================
+
   const billingTickets = tickets.filter(
     (ticket) => ticket.category === "Billing"
   ).length;
@@ -100,10 +125,16 @@ function Analytics() {
     (ticket) => ticket.category === "General"
   ).length;
 
+  // ===============================
+  // PERCENTAGE
+  // ===============================
+
   const getPercentage = (value) => {
     if (!totalTickets) return 0;
 
-    return Math.round((value / totalTickets) * 100);
+    return Math.round(
+      (value / totalTickets) * 100
+    );
   };
 
   // ===============================
@@ -163,6 +194,12 @@ function Analytics() {
     },
   ].filter((item) => item.value > 0);
 
+  // ===============================
+  // CHART SETTINGS
+  // ===============================
+
+  const chartMax = Math.max(totalTickets, 1);
+
   const PIE_COLORS = [
     "#3b82f6",
     "#22c55e",
@@ -170,12 +207,24 @@ function Analytics() {
     "#ef4444",
   ];
 
+  // ===============================
+  // TOOLTIP
+  // ===============================
+
+  const tooltipStyle = {
+    backgroundColor: "#1f1f1f",
+    border: "1px solid #333",
+    borderRadius: "10px",
+    color: "#fff",
+  };
+
   return (
     <div className="analytics-page">
 
       {/* ================= HEADER ================= */}
 
       <div className="page-header">
+
         <div>
           <h1>Analytics</h1>
 
@@ -183,12 +232,15 @@ function Analytics() {
             Support performance and ticket insights
           </p>
         </div>
+
       </div>
 
 
       {/* ================= OVERVIEW ================= */}
 
       <section className="stats">
+
+        {/* TOTAL */}
 
         <div className="stat-card">
 
@@ -211,6 +263,8 @@ function Analytics() {
         </div>
 
 
+        {/* OPEN */}
+
         <div className="stat-card">
 
           <div className="stat-icon red">
@@ -232,6 +286,8 @@ function Analytics() {
         </div>
 
 
+        {/* IN PROGRESS */}
+
         <div className="stat-card">
 
           <div className="stat-icon orange">
@@ -252,6 +308,8 @@ function Analytics() {
 
         </div>
 
+
+        {/* RESOLVED */}
 
         <div className="stat-card">
 
@@ -276,11 +334,12 @@ function Analytics() {
       </section>
 
 
-      {/* ================= CHARTS ================= */}
+      {/* ================= ANALYTICS GRID ================= */}
 
       <div className="analytics-grid">
 
-        {/* STATUS CHART */}
+
+        {/* ================= STATUS CHART ================= */}
 
         <section className="analytics-card">
 
@@ -301,7 +360,10 @@ function Analytics() {
 
           <div
             className="analytics-chart"
-            style={{ width: "100%", height: 300 }}
+            style={{
+              width: "100%",
+              height: 300,
+            }}
           >
 
             <ResponsiveContainer
@@ -309,7 +371,15 @@ function Analytics() {
               height="100%"
             >
 
-              <BarChart data={statusData}>
+              <BarChart
+                data={statusData}
+                margin={{
+                  top: 10,
+                  right: 10,
+                  left: 0,
+                  bottom: 10,
+                }}
+              >
 
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -319,14 +389,32 @@ function Analytics() {
                 <XAxis
                   dataKey="name"
                   stroke="#aaa"
+                  tick={{
+                    fill: "#aaa",
+                    fontSize: 12,
+                  }}
                 />
 
                 <YAxis
-                  allowDecimals={false}
                   stroke="#aaa"
+                  allowDecimals={false}
+                  domain={[0, chartMax]}
+                  ticks={Array.from(
+                    { length: chartMax + 1 },
+                    (_, i) => i
+                  )}
+                  tick={{
+                    fill: "#aaa",
+                    fontSize: 12,
+                  }}
                 />
 
-                <Tooltip />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  cursor={{
+                    fill: "rgba(255,255,255,0.05)",
+                  }}
+                />
 
                 <Legend />
 
@@ -335,6 +423,7 @@ function Analytics() {
                   name="Tickets"
                   fill="#3b82f6"
                   radius={[8, 8, 0, 0]}
+                  maxBarSize={60}
                 />
 
               </BarChart>
@@ -346,7 +435,7 @@ function Analytics() {
         </section>
 
 
-        {/* PRIORITY CHART */}
+        {/* ================= PRIORITY CHART ================= */}
 
         <section className="analytics-card">
 
@@ -367,7 +456,10 @@ function Analytics() {
 
           <div
             className="analytics-chart"
-            style={{ width: "100%", height: 300 }}
+            style={{
+              width: "100%",
+              height: 300,
+            }}
           >
 
             <ResponsiveContainer
@@ -375,7 +467,15 @@ function Analytics() {
               height="100%"
             >
 
-              <BarChart data={priorityData}>
+              <BarChart
+                data={priorityData}
+                margin={{
+                  top: 10,
+                  right: 10,
+                  left: 0,
+                  bottom: 10,
+                }}
+              >
 
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -385,14 +485,32 @@ function Analytics() {
                 <XAxis
                   dataKey="name"
                   stroke="#aaa"
+                  tick={{
+                    fill: "#aaa",
+                    fontSize: 12,
+                  }}
                 />
 
                 <YAxis
-                  allowDecimals={false}
                   stroke="#aaa"
+                  allowDecimals={false}
+                  domain={[0, chartMax]}
+                  ticks={Array.from(
+                    { length: chartMax + 1 },
+                    (_, i) => i
+                  )}
+                  tick={{
+                    fill: "#aaa",
+                    fontSize: 12,
+                  }}
                 />
 
-                <Tooltip />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  cursor={{
+                    fill: "rgba(255,255,255,0.05)",
+                  }}
+                />
 
                 <Legend />
 
@@ -401,6 +519,7 @@ function Analytics() {
                   name="Tickets"
                   fill="#f59e0b"
                   radius={[8, 8, 0, 0]}
+                  maxBarSize={60}
                 />
 
               </BarChart>
@@ -412,7 +531,7 @@ function Analytics() {
         </section>
 
 
-        {/* CATEGORY CHART */}
+        {/* ================= CATEGORY CHART ================= */}
 
         <section className="analytics-card">
 
@@ -433,7 +552,10 @@ function Analytics() {
 
           <div
             className="analytics-chart"
-            style={{ width: "100%", height: 300 }}
+            style={{
+              width: "100%",
+              height: 300,
+            }}
           >
 
             {categoryData.length === 0 ? (
@@ -468,7 +590,7 @@ function Analytics() {
                           fill={
                             PIE_COLORS[
                               index %
-                              PIE_COLORS.length
+                                PIE_COLORS.length
                             ]
                           }
                         />
@@ -477,7 +599,9 @@ function Analytics() {
 
                   </Pie>
 
-                  <Tooltip />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                  />
 
                   <Legend />
 
@@ -492,7 +616,7 @@ function Analytics() {
         </section>
 
 
-        {/* PERFORMANCE */}
+        {/* ================= PERFORMANCE ================= */}
 
         <section className="analytics-card">
 
@@ -512,6 +636,8 @@ function Analytics() {
 
 
           <div className="performance-box">
+
+            {/* RESOLUTION RATE */}
 
             <div>
 
@@ -533,6 +659,8 @@ function Analytics() {
             </div>
 
 
+            {/* ACTIVE WORKLOAD */}
+
             <div>
 
               <span>
@@ -546,6 +674,8 @@ function Analytics() {
 
             </div>
 
+
+            {/* HIGH RISK */}
 
             <div>
 
@@ -563,18 +693,23 @@ function Analytics() {
           </div>
 
 
-          {/* STATUS SUMMARY */}
+          {/* ================= STATUS SUMMARY ================= */}
 
           <div className="analytics-list">
+
+
+            {/* OPEN */}
 
             <div className="analytics-row">
 
               <div>
                 <span>Open</span>
+
                 <strong>
                   {openTickets}
                 </strong>
               </div>
+
 
               <div className="progress-track">
 
@@ -589,25 +724,30 @@ function Analytics() {
 
               </div>
 
+
               <small>
-                {getPercentage(
-                  openTickets
-                )}
-                %
+                {getPercentage(openTickets)}%
               </small>
 
             </div>
 
 
+            {/* IN PROGRESS */}
+
             <div className="analytics-row">
 
               <div>
-                <span>In Progress</span>
+
+                <span>
+                  In Progress
+                </span>
 
                 <strong>
                   {inProgressTickets}
                 </strong>
+
               </div>
+
 
               <div className="progress-track">
 
@@ -622,6 +762,7 @@ function Analytics() {
 
               </div>
 
+
               <small>
                 {getPercentage(
                   inProgressTickets
@@ -632,15 +773,22 @@ function Analytics() {
             </div>
 
 
+            {/* RESOLVED */}
+
             <div className="analytics-row">
 
               <div>
-                <span>Resolved</span>
+
+                <span>
+                  Resolved
+                </span>
 
                 <strong>
                   {resolvedTickets}
                 </strong>
+
               </div>
+
 
               <div className="progress-track">
 
@@ -654,6 +802,7 @@ function Analytics() {
                 />
 
               </div>
+
 
               <small>
                 {getPercentage(
@@ -675,3 +824,4 @@ function Analytics() {
 }
 
 export default Analytics;
+
