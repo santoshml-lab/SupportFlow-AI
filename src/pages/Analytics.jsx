@@ -1,6 +1,58 @@
-import ticketsData from "../data/ticketsData";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 function Analytics() {
+  const [ticketsData, setTicketsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ===============================
+  // FETCH REAL TICKETS FROM SUPABASE
+  // ===============================
+
+  const fetchTickets = async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("tickets")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Analytics Supabase error:", error);
+      alert(`Could not load analytics: ${error.message}`);
+      setLoading(false);
+      return;
+    }
+
+    setTicketsData(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  // ===============================
+  // LOADING
+  // ===============================
+
+  if (loading) {
+    return (
+      <div className="analytics-page">
+        <div className="page-header">
+          <div>
+            <h1>Analytics</h1>
+            <p>Loading support analytics...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===============================
+  // STATUS
+  // ===============================
+
   const totalTickets = ticketsData.length;
 
   const openTickets = ticketsData.filter(
@@ -14,6 +66,10 @@ function Analytics() {
   const resolvedTickets = ticketsData.filter(
     (ticket) => ticket.status === "Resolved"
   ).length;
+
+  // ===============================
+  // PRIORITY
+  // ===============================
 
   const highPriority = ticketsData.filter(
     (ticket) => ticket.priority === "High"
@@ -31,6 +87,10 @@ function Analytics() {
     (ticket) => ticket.priority === "Low"
   ).length;
 
+  // ===============================
+  // CATEGORY
+  // ===============================
+
   const billingTickets = ticketsData.filter(
     (ticket) => ticket.category === "Billing"
   ).length;
@@ -47,162 +107,280 @@ function Analytics() {
     (ticket) => ticket.category === "General"
   ).length;
 
+  // ===============================
+  // PERCENTAGE
+  // ===============================
+
   const getPercentage = (value) => {
     if (!totalTickets) return 0;
-    return Math.round((value / totalTickets) * 100);
+
+    return Math.round(
+      (value / totalTickets) * 100
+    );
   };
+
+  // ===============================
+  // PERFORMANCE
+  // ===============================
+
+  const resolutionRate = totalTickets
+    ? Math.round(
+        (resolvedTickets / totalTickets) * 100
+      )
+    : 0;
+
+  const activeWorkload =
+    openTickets + inProgressTickets;
+
+  const highRiskTickets =
+    criticalPriority + highPriority;
+
+  // ===============================
+  // UI
+  // ===============================
 
   return (
     <div className="analytics-page">
 
-      {/* HEADER */}
+      {/* ================= HEADER ================= */}
 
       <div className="page-header">
+
         <div>
           <h1>Analytics</h1>
+
           <p>
             Support performance and ticket insights
           </p>
         </div>
+
       </div>
 
 
-      {/* OVERVIEW */}
+      {/* ================= OVERVIEW ================= */}
 
       <section className="stats">
 
         <div className="stat-card">
+
           <div className="stat-icon blue">
             🎫
           </div>
 
           <div>
+
             <span>Total Tickets</span>
-            <h2>{totalTickets}</h2>
-            <small>All support requests</small>
+
+            <h2>
+              {totalTickets}
+            </h2>
+
+            <small>
+              All support requests
+            </small>
+
           </div>
+
         </div>
 
 
         <div className="stat-card">
+
           <div className="stat-icon red">
             🚨
           </div>
 
           <div>
+
             <span>Open Tickets</span>
-            <h2>{openTickets}</h2>
-            <small>Needs attention</small>
+
+            <h2>
+              {openTickets}
+            </h2>
+
+            <small>
+              Needs attention
+            </small>
+
           </div>
+
         </div>
 
 
         <div className="stat-card">
+
           <div className="stat-icon orange">
             ⏳
           </div>
 
           <div>
+
             <span>In Progress</span>
-            <h2>{inProgressTickets}</h2>
-            <small>Currently being handled</small>
+
+            <h2>
+              {inProgressTickets}
+            </h2>
+
+            <small>
+              Currently being handled
+            </small>
+
           </div>
+
         </div>
 
 
         <div className="stat-card">
+
           <div className="stat-icon green">
             ✓
           </div>
 
           <div>
+
             <span>Resolved</span>
-            <h2>{resolvedTickets}</h2>
-            <small>Successfully resolved</small>
+
+            <h2>
+              {resolvedTickets}
+            </h2>
+
+            <small>
+              Successfully resolved
+            </small>
+
           </div>
+
         </div>
 
       </section>
 
 
-      {/* ANALYTICS GRID */}
+      {/* ================= ANALYTICS GRID ================= */}
 
       <div className="analytics-grid">
 
-        {/* STATUS */}
+
+        {/* ================= STATUS ================= */}
 
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Ticket Status</h2>
-              <p>Current support workload</p>
+
+              <h2>
+                Ticket Status
+              </h2>
+
+              <p>
+                Current support workload
+              </p>
+
             </div>
+
           </div>
 
 
           <div className="analytics-list">
 
+
             <div className="analytics-row">
+
               <div>
                 <span>Open</span>
-                <strong>{openTickets}</strong>
+
+                <strong>
+                  {openTickets}
+                </strong>
               </div>
 
+
               <div className="progress-track">
+
                 <div
                   className="progress-fill blue-fill"
                   style={{
-                    width: `${getPercentage(openTickets)}%`,
+                    width: `${getPercentage(
+                      openTickets
+                    )}%`,
                   }}
                 />
+
               </div>
+
 
               <small>
                 {getPercentage(openTickets)}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
+
               <div>
                 <span>In Progress</span>
-                <strong>{inProgressTickets}</strong>
+
+                <strong>
+                  {inProgressTickets}
+                </strong>
               </div>
 
+
               <div className="progress-track">
+
                 <div
                   className="progress-fill orange-fill"
                   style={{
-                    width: `${getPercentage(inProgressTickets)}%`,
+                    width: `${getPercentage(
+                      inProgressTickets
+                    )}%`,
                   }}
                 />
+
               </div>
 
+
               <small>
-                {getPercentage(inProgressTickets)}%
+                {getPercentage(
+                  inProgressTickets
+                )}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
+
               <div>
                 <span>Resolved</span>
-                <strong>{resolvedTickets}</strong>
+
+                <strong>
+                  {resolvedTickets}
+                </strong>
               </div>
 
+
               <div className="progress-track">
+
                 <div
                   className="progress-fill green-fill"
                   style={{
-                    width: `${getPercentage(resolvedTickets)}%`,
+                    width: `${getPercentage(
+                      resolvedTickets
+                    )}%`,
                   }}
                 />
+
               </div>
 
+
               <small>
-                {getPercentage(resolvedTickets)}%
+                {getPercentage(
+                  resolvedTickets
+                )}%
               </small>
+
             </div>
 
           </div>
@@ -210,27 +388,43 @@ function Analytics() {
         </section>
 
 
-        {/* PRIORITY */}
+        {/* ================= PRIORITY ================= */}
 
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Priority Breakdown</h2>
-              <p>Ticket urgency distribution</p>
+
+              <h2>
+                Priority Breakdown
+              </h2>
+
+              <p>
+                Ticket urgency distribution
+              </p>
+
             </div>
+
           </div>
 
 
           <div className="analytics-list">
 
+
             <div className="analytics-row">
+
               <div>
                 <span>Critical</span>
-                <strong>{criticalPriority}</strong>
+
+                <strong>
+                  {criticalPriority}
+                </strong>
               </div>
 
+
               <div className="progress-track">
+
                 <div
                   className="progress-fill critical-fill"
                   style={{
@@ -239,21 +433,32 @@ function Analytics() {
                     )}%`,
                   }}
                 />
+
               </div>
 
+
               <small>
-                {getPercentage(criticalPriority)}%
+                {getPercentage(
+                  criticalPriority
+                )}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
+
               <div>
                 <span>High</span>
-                <strong>{highPriority}</strong>
+
+                <strong>
+                  {highPriority}
+                </strong>
               </div>
 
+
               <div className="progress-track">
+
                 <div
                   className="progress-fill red-fill"
                   style={{
@@ -262,21 +467,32 @@ function Analytics() {
                     )}%`,
                   }}
                 />
+
               </div>
 
+
               <small>
-                {getPercentage(highPriority)}%
+                {getPercentage(
+                  highPriority
+                )}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
+
               <div>
                 <span>Medium</span>
-                <strong>{mediumPriority}</strong>
+
+                <strong>
+                  {mediumPriority}
+                </strong>
               </div>
 
+
               <div className="progress-track">
+
                 <div
                   className="progress-fill orange-fill"
                   style={{
@@ -285,21 +501,32 @@ function Analytics() {
                     )}%`,
                   }}
                 />
+
               </div>
 
+
               <small>
-                {getPercentage(mediumPriority)}%
+                {getPercentage(
+                  mediumPriority
+                )}%
               </small>
+
             </div>
 
 
             <div className="analytics-row">
+
               <div>
                 <span>Low</span>
-                <strong>{lowPriority}</strong>
+
+                <strong>
+                  {lowPriority}
+                </strong>
               </div>
 
+
               <div className="progress-track">
+
                 <div
                   className="progress-fill green-fill"
                   style={{
@@ -308,11 +535,16 @@ function Analytics() {
                     )}%`,
                   }}
                 />
+
               </div>
 
+
               <small>
-                {getPercentage(lowPriority)}%
+                {getPercentage(
+                  lowPriority
+                )}%
               </small>
+
             </div>
 
           </div>
@@ -320,38 +552,78 @@ function Analytics() {
         </section>
 
 
-        {/* CATEGORY */}
+        {/* ================= CATEGORY ================= */}
 
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Ticket Categories</h2>
-              <p>Customer issue distribution</p>
+
+              <h2>
+                Ticket Categories
+              </h2>
+
+              <p>
+                Customer issue distribution
+              </p>
+
             </div>
+
           </div>
 
 
           <div className="category-grid">
 
             <div className="category-box">
-              <span>💳 Billing</span>
-              <strong>{billingTickets}</strong>
+
+              <span>
+                💳 Billing
+              </span>
+
+              <strong>
+                {billingTickets}
+              </strong>
+
             </div>
 
-            <div className="category-box">
-              <span>👤 Account</span>
-              <strong>{accountTickets}</strong>
-            </div>
 
             <div className="category-box">
-              <span>🛠️ Technical</span>
-              <strong>{technicalTickets}</strong>
+
+              <span>
+                👤 Account
+              </span>
+
+              <strong>
+                {accountTickets}
+              </strong>
+
             </div>
 
+
             <div className="category-box">
-              <span>💬 General</span>
-              <strong>{generalTickets}</strong>
+
+              <span>
+                🛠️ Technical
+              </span>
+
+              <strong>
+                {technicalTickets}
+              </strong>
+
+            </div>
+
+
+            <div className="category-box">
+
+              <span>
+                💬 General
+              </span>
+
+              <strong>
+                {generalTickets}
+              </strong>
+
             </div>
 
           </div>
@@ -359,50 +631,68 @@ function Analytics() {
         </section>
 
 
-        {/* PERFORMANCE */}
+        {/* ================= PERFORMANCE ================= */}
 
         <section className="analytics-card">
 
           <div className="section-header">
+
             <div>
-              <h2>Support Performance</h2>
-              <p>Overall ticket resolution metrics</p>
+
+              <h2>
+                Support Performance
+              </h2>
+
+              <p>
+                Overall ticket resolution metrics
+              </p>
+
             </div>
+
           </div>
 
 
           <div className="performance-box">
 
+
             <div>
-              <span>Resolution Rate</span>
+
+              <span>
+                Resolution Rate
+              </span>
 
               <strong>
-                {totalTickets
-                  ? Math.round(
-                      (resolvedTickets / totalTickets) * 100
-                    )
-                  : 0}
-                %
+                {resolutionRate}%
               </strong>
+
             </div>
 
 
             <div>
-              <span>Active Workload</span>
+
+              <span>
+                Active Workload
+              </span>
 
               <strong>
-                {openTickets + inProgressTickets}
+                {activeWorkload}
               </strong>
+
             </div>
 
 
             <div>
-              <span>High Risk Tickets</span>
+
+              <span>
+                High Risk Tickets
+              </span>
 
               <strong>
-                {criticalPriority + highPriority}
+                {highRiskTickets}
               </strong>
+
             </div>
+
 
           </div>
 
