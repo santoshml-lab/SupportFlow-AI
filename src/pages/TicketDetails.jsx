@@ -8,6 +8,7 @@ function TicketDetails({ ticket, onBack, onViewCustomer }) {
 
   const [aiResult, setAiResult] = useState(null);
   const [aiReply, setAiReply] = useState("");
+  const [saveLoading, setSaveLoading] = useState(false);
 
   // =========================
   // AI TICKET ANALYSIS
@@ -134,6 +135,34 @@ function TicketDetails({ ticket, onBack, onViewCustomer }) {
       setReplyLoading(false);
     }
   };
+  const saveAIReply = async () => {
+  if (!aiReply.trim()) {
+    alert("Please generate or write a reply first.");
+    return;
+  }
+
+  setSaveLoading(true);
+
+  try {
+    const { error } = await supabase
+      .from("tickets")
+      .update({
+        ai_suggested_reply: aiReply.trim(),
+      })
+      .eq("id", ticket.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    alert("AI reply saved successfully! ✅");
+  } catch (error) {
+    console.error("Save AI reply error:", error);
+    alert(`Unable to save reply: ${error.message}`);
+  } finally {
+    setSaveLoading(false);
+  }
+};
 
 
   // =========================
@@ -612,11 +641,26 @@ function TicketDetails({ ticket, onBack, onViewCustomer }) {
                 >
 
                   <button
-                    className="copy-btn"
-                    onClick={copyReply}
-                  >
-                    📋 Copy Reply
-                  </button>
+  className="copy-btn"
+  onClick={copyReply}
+>
+  📋 Copy Reply
+</button>
+
+<button
+  className="new-ticket"
+  onClick={saveAIReply}
+  disabled={saveLoading}
+>
+  {saveLoading
+    ? "Saving..."
+    : "💾 Save Reply"}
+</button>
+                    
+                    
+                  
+                    
+                  
 
                 </div>
 
