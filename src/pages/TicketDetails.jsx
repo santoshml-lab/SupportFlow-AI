@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 const API_BASE = "https://finpilotai-2s9v.onrender.com";
 
