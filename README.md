@@ -114,20 +114,9 @@ GROQ_API_KEY=your_groq_api_key
 
 Keep API keys in environment variables and never commit them to GitHub.
 
-📸 Screenshots
 
-Add screenshots of:
 
-1. Dashboard
-2. Tickets page
-3. Ticket Details
-4. AI Analysis
-5. AI Auto Reply
-6. Customer management
 
-Example:
-
-![SupportFlow AI Dashboard](./screenshots/dashboard.png)
 
 🎯 Project Goal
 
