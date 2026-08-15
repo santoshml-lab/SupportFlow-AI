@@ -2132,6 +2132,50 @@ button {
 
 }
 
+/* ============================= */
+/* ANALYTICS CHARTS */
+/* ============================= */
+
+.analytics-chart {
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
+}
+
+/* ============================= */
+/* MOBILE RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+  .analytics-page {
+    padding: 20px;
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .analytics-card {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .analytics-chart {
+    height: 260px !important;
+  }
+
+  .section-header h2 {
+    font-size: 20px;
+  }
+
+  .section-header p {
+    font-size: 13px;
+  }
+
+}
+
 
    
    
